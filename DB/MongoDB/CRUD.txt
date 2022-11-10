@@ -1,0 +1,63 @@
+db.productos.insertMany([{id: 1, timestamp: , nombre:"Silla", descripcion:"Una silla", foto_url: "", precio: 3700, stock: 87},
+                        {id: 2, timestamp: , nombre:"Mesa", descripcion:"Una mesa", foto_url: "", precio: 4850, stock: 66},
+                        {id: 3, timestamp: , nombre:"Monitor", descripcion:"Un monitor", foto_url: "", precio: 4100, stock: 52},
+                        {id: 4, timestamp: , nombre:"Celular", descripcion:"Un celular", foto_url: "", precio: 2680, stock: 25},
+                        {id: 5, timestamp: , nombre:"Lampara", descripcion:"Una lampara", foto_url: "", precio: 1250, stock: 70},
+                        {id: 6, timestamp: , nombre:"Ventilador", descripcion:"Un ventilador", foto_url: "", precio: 2030, stock: 36},
+                        {id: 7, timestamp: , nombre:"Impresora", descripcion:"Una impresora", foto_url: "", precio: 3520, stock: 42},
+                        {id: 8, timestamp: , nombre:"Cortina", descripcion:"Una cortina", foto_url: "", precio: 900, stock: 80},
+                        {id: 9, timestamp: , nombre:"Mueble", descripcion:"Un mueble", foto_url: "", precio: 5000, stock: 30},
+                        {id: 10, timestamp: , nombre:"Almohada", descripcion:"Una almohada", foto_url: "", precio: 200, stock: 70}])
+
+db.mensajes.insertMany([{email: mail1@gmail.com, timestamp: , mensaje:"Buenos dias"},
+                        {email: mail2@gmail.com, timestamp: , mensaje:"Hola, como va"},
+                        {email: mail3@gmail.com, timestamp: , mensaje:"Muy bien y vos?"},
+                        {email: mail4@gmail.com, timestamp: , mensaje:"Bien por suerte, con mucho calor"},
+                        {email: mail5@gmail.com, timestamp: , mensaje:"Yo igual, es que estos dias hizo mas de 30º"},
+                        {email: mail6@gmail.com, timestamp: , mensaje:"Si lo vi, ojala estuviese en Usuahia"},
+                        {email: mail7@gmail.com, timestamp: , mensaje:"Seria lindo ir ahi para salvarnos del calor"},
+                        {email: mail8@gmail.com, timestamp: , mensaje:"Y los glaciares me encantaria conocerlos"},
+                        {email: mail9@gmail.com, timestamp: , mensaje:"Ojala puedas ir, es hermoso"},
+                        {email: mail10@gmail.com, timestamp: , mensaje:"Si, me tengo que ir. Saludos"}])
+3)
+
+db.productos.find()
+db.mensajes.find()
+
+4)
+
+db.productos.totalSize()
+db.mensajes.totalSize()
+
+5)
+ a)
+db.productos.insert({id: 11, timestamp: , nombre:"Anteojos", descripcion:"Unos anteojos", foto_url: "", precio: 3100, stock: 54 })
+
+ b)
+
+db.productos.find({"precio": {$in: [100, 1000]}})
+db.productos.find({"precio": {$in: [1000, 3000]}})
+db.productos.find({"precio": {$in: [3000, 5000]}})
+db.productos.find().skip(2).limit(3).sort({precio:1})
+
+ c)
+
+ db.productos.updateMany({$set: {"stock": "100"}})
+
+ d) 
+
+  db.productos.updateMany({"precio": {$in: [4000, 5000]}},{$set: {"stock": "0"}})
+
+  e)
+
+  db.productos.deleteMany({"precio": {$in: [100, 1000]})
+
+  6)
+
+  db.createUser({
+    user: "pepe",
+    pwd: "asd456",
+    roles: [
+        { role: "read", db: "ecommerce" }
+    ]
+  })
