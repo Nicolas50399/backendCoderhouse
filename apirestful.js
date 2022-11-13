@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const db = require("./main.js")
+const db = require("./containers/ContenedorArchivos.js")
 
 const { Router } = express;
 
@@ -11,37 +11,10 @@ router.use(express.json());
 
 const DB = new db();
 
-app.set('views', './views');
-
-/*
-const bcrypt = require("bcrypt");
-const handlebars = require("express-handlebars");
 
 
-// * ---------------------FRONTEND-------------------------------------
 
-app.get("/agregarProductos", (req, res) => {
-    res.render("indexHbs", { layout: "agregarProductos" }); //*EN HANDLEBARS
 
-});
-app.get("/admin", async (req, res) => {
-    const productos = await DB.getAll();
-    res.render("indexHbs", { layout: "productos", productos });//*EN HANDLEBARS
-});
-
-app.get("/producto/:id", async (req, res) => {
-    const { id } = req.params;
-    try {
-        const data = await DB.getById(id);
-        res.render("indexHbs", { layout: "producto", ...data });//*EN HANDLEBARS
-    } catch (e) {
-        return res.status(404).render("indexHbs", { layout: "error" });//*EN HANDLEBARS
-    }
-
-    res.render("indexHbs", { layout: "productos", productos });//*EN HANDLEBARS
-});
-*/
-//*-------------------------REQUEST---------------------------------------
 
 const esAdmin = true;
 
@@ -54,12 +27,14 @@ const protegida = (req, res, next) => { //MIDDLEWARE QUE REVISA SI EL USUARIO ES
     }
 }
 
+//FUNCIONA!
 router.get('/', async (req, res) =>{
     const data = await DB.getAll('productos.txt');
     return res.send(data);
 })
 
 //*DISPONIBLE PARA USUARIOS Y ADMINISTRADORES
+//FUNCIONA!
 router.get('/:id', async(req, res) => {
 
     const { id } = req.params;
@@ -73,10 +48,12 @@ router.get('/:id', async(req, res) => {
 })
 
 //*DISPONIBLE SOLO PARA ADMINISTRADORES
+//FUNCIONA!!
 router.post('/', protegida, async (req, res) => {
-    const { producto } = req.body;
+    const producto = req.body;
+
     try{
-        const id = await DB.save(producto, 'productos.txt');
+       const id = await DB.save(producto, 'productos.txt');
 
         return res.send({agregado: producto, id: id});
     }
@@ -85,17 +62,24 @@ router.post('/', protegida, async (req, res) => {
     }
 })
 
+//FUNCIONA!!
 router.put('/:id', protegida, async (req, res) => {
     const {id} = req.params;
-    const {producto} = req.body;
+    const producto = req.body;
     const productos = await DB.getAll('productos.txt');
-    const pos = productos.indexOf(await DB.getById(id, 'productos.txt'))
+    const ant = await DB.getById(id, 'productos.txt')
+    const pos = productos.findIndex(p => JSON.stringify(p) === JSON.stringify(ant))
+    
+
+    
     const anterior = productos[pos];
     productos[pos] = producto;
+    await DB.updateFile(productos, 'productos.txt')
     res.send({actualizado: producto, anterior: anterior})
     
 })
 
+//FUNCIONA!!
 router.delete('/:id', protegida, async (req, res) => {
     const {id} = req.params;
     try{

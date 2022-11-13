@@ -1,0 +1,1 @@
+[{"id":1,"name":"obj1"},{"id":2,"name":"obj2"},{"id":3,"timeStamp":1668313008678},"productos.txt","productos.txt"]

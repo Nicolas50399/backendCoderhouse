@@ -2,7 +2,6 @@ const { optionsMariaDB } = require('./options/mariaDB.js')
 const knex = require('knex')(optionsMariaDB);
 
 //const db = require("../main.js");
-const { default: knex } = require('knex');
 //const DB = new db();
 
 
@@ -29,6 +28,9 @@ class ContenedorBDD{
                 break;
                 case 'mensajes': {
                     table.increments('id')
+                    table.string('email')
+                    table.timestamp('timestamp').defaultTo(knex.fn.now())
+                    table.string('mensaje')
                 }
             }
             
@@ -40,23 +42,25 @@ class ContenedorBDD{
         })
     }
 
-    async insertarDato(producto, nameTable){
+    async insertarDato(object, nameTable){
         try {
             switch(nameTable){
                 case 'productos': {
                     await knex(`${nameTable}`).insert({
-                        timestamp: producto.timestamp,
-                        nombre: producto.nombre,
-                        descripcion: producto.descripcion,
-                        foto_url: producto.fotoUrl,
-                        precio: producto.precio,
-                        stock: producto.stock
+                        timestamp: object.timestamp,
+                        nombre: object.nombre,
+                        descripcion: object.descripcion,
+                        foto_url: object.fotoUrl,
+                        precio: object.precio,
+                        stock: object.stock
                     })
                 }
                 break;
                 case 'mensajes': {
                     await knex(`${nameTable}`).insert({
-                        
+                        email: object.email,
+                        timestamp: object.timestamp,
+                        mensaje: object.mensaje
                     })
                 }
             }

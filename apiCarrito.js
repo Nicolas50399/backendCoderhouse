@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const db = require("./main.js")
+const db = require("./containers/ContenedorArchivos.js")
 
 const { Router } = express;
 
@@ -89,3 +89,5 @@ app.delete('/:id/productos/:id_prod', async (req, res) => {
         return res.status(404).send({ error: true, msg: e.message })
     }
 })
+
+module.exports = router
