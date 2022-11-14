@@ -12,10 +12,6 @@ router.use(express.json());
 const DB = new db();
 
 
-
-
-
-
 const esAdmin = true;
 
 const protegida = (req, res, next) => { //MIDDLEWARE QUE REVISA SI EL USUARIO ES ADMIN O NO

@@ -12,7 +12,6 @@ app.use('/api/carrito', carritoRouter)
 //app.use("/", express.static(__dirname + "/public"));
 
 
-const DB = new db();
 
 /*
 app.get('/productos', async (req, res) => {
@@ -33,17 +32,29 @@ app.get('/productoRandom', async (req, res) => {
 });
 */
 
-app.set('views', './views');
+app.use('views', './views/');
 
 const bcrypt = require("bcrypt");
 const handlebars = require("express-handlebars");
-
+/*
 const hbs = handlebars.engine({
-    extname: 'hbs',
-    layoutsDir: './views/layouts/'
-})
+    extname: "hbs",
+    layoutsDir: "./views/layouts/",
+})*/
 
-app.engine("hbs", hbs)
+app.set('views', path.join(__dirname, 'views'))
+
+app.engine('.hbs', handlebars.engine({
+    defaultLayout: 'indexHbs',
+    layoutsDir: path.join(app.get('views'), 'layouts'),
+    partialsDir: path.join(app.get('views'), 'partials'),
+    extname: '.hbs'
+}))
+
+app.set('view engine', '.hbs')
+
+
+const DB = new db();
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -79,7 +90,8 @@ app.get("/producto/:id", async (req, res) => {
 //*-------------------------WEBSOCKETS---------------------------------------
 
 const { Server: IOServer } = require('socket.io')
-const { Server: HttpServer } = require('http')
+const { Server: HttpServer } = require('http');
+const path = require('path');
 const httpServer = new HttpServer(app)
 const io = new IOServer(httpServer)
 

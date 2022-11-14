@@ -26,7 +26,7 @@ class ContenedorArchivos {
         }
     }
 
-    async save(object, nameFile) {//Agrega un objeto al array del archivo
+    async save(object, nameFile) {//Agrega un objeto al array del archivo y devuelve su id
         const data = await fs.promises.readFile(
             nameFile, 'utf-8'
         );
@@ -39,7 +39,7 @@ class ContenedorArchivos {
 
         switch (nameFile) {
             case 'carrito.txt': {
-                elements.push(object, nameFile);
+                elements.push(object);
                 break;
             }
             case 'productos.txt': {
@@ -52,7 +52,7 @@ class ContenedorArchivos {
                 }
                 else{
                     object.timeStamp = Date.now();
-                    elements.push(object, nameFile);
+                    elements.push(object);
                 }
                 break;
             }
@@ -85,8 +85,8 @@ class ContenedorArchivos {
             return productoBuscado;
         }
         else {
-            const noEncontrado = "Elemento no encontrado"
-            return noEncontrado;
+            //const noEncontrado = "Elemento no encontrado"
+            return -1;
         }
     }
 
