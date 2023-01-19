@@ -1,4 +1,10 @@
 const express = require('express');
+const cookieParser = require('cookie-parser')
+const session = require('express-session')
+
+const MongoStore = require('connect-mongo')
+const advancedOptions = { useNewUrlParser: true, useUnifiedTopology: true }
+
 const app = express();
 const db = require("./containers/ContenedorArchivos.js")
 
@@ -6,8 +12,7 @@ const handlebars = require("express-handlebars");
 
 const DB = new db();
 
-//app.engine('handlebars', engine());
-//app.set('views', './views');
+
 
 
 //views
@@ -62,6 +67,30 @@ app.get('/producto/:id', async (req, res) => {
         return res.status(404).render('home', { layout: "error" })
     }
 })
+
+app.get('/login', (req, res) => {
+    res.render('home', {layout: "login"});
+})
+
+
+app.post('/login', async(req, res) => {
+    const {nombre, clave} = req.body
+    console.log(req.body)
+
+    app.use(session({
+        store: MongoStore.create({
+            mongoUrl: 'mongodb://127.0.0.1:27017/sesiones', mongoOptions: advancedOptions
+        }),
+        secret: "",
+        resave: false,
+        saveUninitialized: false
+    }))
+    
+    //res.send({error: false, msg: 'Producto agregado con id' + id})
+    return res.redirect('/admin')
+})
+
+
 
 app.listen(3000, () => {
     console.log("Servidor listo")
