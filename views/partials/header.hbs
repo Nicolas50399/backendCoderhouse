@@ -2,15 +2,8 @@
   <!-- Fixed navbar -->
   <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
     <a class="navbar-brand" href="#">Super social</a>
-    <button
-      class="navbar-toggler"
-      type="button"
-      data-toggle="collapse"
-      data-target="#navbarCollapse"
-      aria-controls="navbarCollapse"
-      aria-expanded="false"
-      aria-label="Toggle navigation"
-    >
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse"
+      aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarCollapse">
@@ -22,7 +15,24 @@
           <a class="nav-link" href="/agregarProductos">Ingresar Producto</a>
         </li>
         <li class="nav-item" style="position: absolute; right: 10px;">
-          <a class="nav-link btn btn-success" href="/login">Log-in</a>
+          <form method="POST" action="/logout">
+            
+            <button type="submit" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal">
+              Log-out
+            </button>
+
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+              aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">¡Hasta luego, {{name}}!</h1>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
         </li>
       </ul>
     </div>

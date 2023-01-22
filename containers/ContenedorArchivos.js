@@ -96,7 +96,7 @@ class ContenedorArchivos {
                 `${nameFile}`, 'utf-8'
             );
             const personas = JSON.parse(data);
-            console.log(personas);
+            
             return personas;
         }
         catch (e) {
