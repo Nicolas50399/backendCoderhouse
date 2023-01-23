@@ -1,16 +1,22 @@
 const express = require('express');
-const cookieParser = require('cookie-parser')
+//const cookieParser = require('cookie-parser')
+const bodyParser = require('body-parser')
 const session = require('express-session')
 
 const MongoStore = require('connect-mongo')
+const DAOUsuarioMongo = require("./DB/daos/usuario/DAOUsuarioMongo.js")
+const MongoUsers = new DAOUsuarioMongo();
 const advancedOptions = { useNewUrlParser: true, useUnifiedTopology: true }
 
 const app = express();
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: false }));
 
 const db = require("./containers/ContenedorArchivos.js")
 const DB = new db();
 
-app.use(cookieParser())
+//app.use(cookieParser())
 
 const handlebars = require("express-handlebars");
 
@@ -26,8 +32,6 @@ app.engine('hbs', hbs)
 app.set('view engine', 'hbs');
 
 //middlewares
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
 
 app.use(
     session({
@@ -56,6 +60,8 @@ const adminAuth = (req, res, next) => {
     }
 };
 
+//*REDIRIGIR DEPENDIENDO SI EXISTE SESION ACTIVA
+
 app.get("/", (req, res) => {
     if (req.session.user) {
         res.redirect('/admin')
@@ -65,6 +71,8 @@ app.get("/", (req, res) => {
 
 });
 
+//* RUTAS GET (PAGINAS)
+
 app.get('/admin', auth, adminAuth, async (req, res) => {
     const data = await DB.getAll('productos.txt')
     res.render('home', { layout: "productos", productos: data, name: req.session.user })
@@ -73,15 +81,6 @@ app.get('/admin', auth, adminAuth, async (req, res) => {
 app.get('/agregarProductos', (req, res) => {
     res.render('home', { layout: "agregarProductos" });
 });
-
-app.post('/api/productos', async (req, res) => {
-    const { nombre, marca, precio } = req.body
-    console.log(req.body)
-    const id = await DB.save({ nombre, marca, precio }, 'productos.txt')
-    console.log(id)
-    //res.send({error: false, msg: 'Producto agregado con id' + id})
-    return res.redirect('/agregarProductos')
-})
 
 app.get('/producto/:id', async (req, res) => {
     const { id } = req.params
@@ -103,18 +102,64 @@ app.get('/login', (req, res) => {
     res.render('home', { layout: "login" });
 })
 
+app.get('/register', (req, res) => {
+    res.render('home', { layout: "register" });
+})
 
-app.post('/admin', (req, res) => {
-    const { nombre, clave } = req.body
-    const isAdmin = true;
+app.get('/loginerror', (req, res) => {
+    res.render('home', { layout: "error", mensaje: "USER ERROR LOGIN" });
+})
+
+app.get('/registererror', (req, res) => {
+    res.render('home', { layout: "error", mensaje: "USER ERROR SIGNUP" });
+})
+
+//* RUTAS POST (ACCIONES)
+
+//AGREGAR PRODUCTO
+app.post('/api/productos', async (req, res) => {
+    const { nombre, marca, precio } = req.body
+    console.log(req.body)
+    const id = await DB.save({ nombre, marca, precio }, 'productos.txt')
+    console.log(id)
+    //res.send({error: false, msg: 'Producto agregado con id' + id})
+    return res.redirect('/agregarProductos')
+})
+
+//LOGIN
+app.post('/login', async (req, res) => {
+    try{
+        const { email, clave } = req.body
+        const isAdmin = true;
+    
+        const user = await MongoUsers.findByUser(email, clave)
+        console.log(user)
+        req.session.rank = user.rank
+        req.session.mail = email
+        res.redirect('/admin')
+    }catch(e){
+        res.redirect("/?error=true");
+    }
 
     req.session.isAdmin = isAdmin;
-    req.session.user = nombre
+    req.session.user = email
     req.session.pass = clave
 
     return res.redirect('/admin')
 })
 
+
+//REGISTRO
+app.post('/register', async (req, res) => {
+    const { nombre, email, clave } = req.body
+    await MongoUsers.save({ nombre, email, clave })
+    req.session.usuario = nombre
+    req.session.mail = email
+    req.session.rank = 0
+    res.redirect('/admin')
+})
+
+//DESLOGUEO
 app.post('/logout', (req, res) => {
     //res.redirect('/logout')
     req.session.destroy()

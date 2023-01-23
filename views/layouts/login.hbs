@@ -33,22 +33,22 @@
 
   <body>
     <div class="text-center">
-      <form class="form-signin" method="POST" action="/admin">
+      <form class="form-signin" method="POST" action="/login">
       <h1 class="h3 mb-3 font-weight-normal">Iniciar sesión</h1>
-      <label for="inputNombreProducto" class="sr-only">Nombre</label>
+      <label for="inputNombreProducto" class="sr-only">Email</label>
       <input
-        type="text"
+        type="email"
         id="inputNombreProducto"
         class="form-control"
         placeholder="Nombre"
         required
         autofocus
-        name="nombre"
+        name="email"
       />
 
       <label for="inputMarcaProducto" class="sr-only">Contraseña</label>
       <input
-        type="text"
+        type="password"
         id="inputMarcaProducto"
         class="form-control"
         placeholder="Contraseña"
@@ -60,8 +60,10 @@
       <button class="btn btn-lg btn-primary btn-block" type="submit">
         Loguearse
       </button>
-      
     </form>
+      <a class="btn btn-lg btn-success btn-block" href="/register">
+        Registro
+      </a>
     </div>
     
    

@@ -9,9 +9,13 @@ const daos = {
     const { default: DAOCarritoMongo } = await import(
       "./carrito/DAOCarritoMongo.js"
     );
+    const { default: DAOUsuarioMongo } = await import(
+      "./usuario/DAOUsuarioMongo.js"
+    );
     return {
       carritoDAO: new DAOCarritoMongo(),
       productoDAO: new DAOProductoMongo(),
+      usuarioDAO : new DAOUsuarioMongo()
     };
   },
   firebase: async () => {
