@@ -2,6 +2,9 @@ const express = require('express');
 //const cookieParser = require('cookie-parser')
 const bodyParser = require('body-parser')
 const session = require('express-session')
+const bcrypt = require("bcrypt")
+const passport = require("passport")
+const { Strategy } = require("passport-local")
 
 const MongoStore = require('connect-mongo')
 const DAOUsuarioMongo = require("./DB/daos/usuario/DAOUsuarioMongo.js")
@@ -38,27 +41,93 @@ app.use(
         store: MongoStore.create({
             mongoUrl: 'mongodb+srv://nico:nico123@backend.vvcutsc.mongodb.net/sesiones',
             mongoOptions: advancedOptions,
-            ttl: 60
+            ttl: 600 //*10 minutos
         }),
         secret: "secreto",
-        resave: false,
+        resave: true,
         saveUninitialized: false
     }))
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+
+//* ESTRATEGIAS PASSPORT
+
+passport.use(
+    "signup",
+    new Strategy({ passReqToCallback: true }, (req, username, password, done) => {
+      console.log(username, password);
+  
+      const { email } = req.body;
+      MongoUsers.db.findOne({ username }, (err, user) => {
+        console.log(user);
+        console.log(err);
+
+        //*Si el usuario ya existe
+        if (user) return done(null, false);
+  
+        Users.create(
+          { username, password: hasPassword(password), email },
+          (err, user) => {
+            if (err) return done(err);
+
+            return done(null, user);
+          }
+        );
+      });
+    })
+  );
+  
+  passport.use(
+    "login",
+    new Strategy({}, (username, password, done) => {
+      MongoUsers.db.findOne({ username }, (err, user) => {
+        if (err) return done(err);
+        //* si el usuario no existe
+        if (!user) return done(null, false);
+        //*si la contraseña es invalida
+        if (!validatePass(password, user.password)) return done(null, false);
+        return done(null, user);
+      });
+    })
+  );
+
+  passport.serializeUser((userObj, done) => {
+    done(null, userObj._id);
+  });
+  
+  passport.deserializeUser((id, done) => {
+    Users.findById(id, done);
+  });
+
+//* AUTORIZACIONES
 
 const auth = (req, res, next) => {
     if (req.session.user) {
         next();
     } else {
-        res.status(401).send({ error: true });
+        res.redirect('/login')
     }
 };
 const adminAuth = (req, res, next) => {
-    if (req.session.isAdmin) {
+    if (req.session.rank >= 1) {
         next();
     } else {
         res.status(401).send({ error: true });
     }
 };
+
+//*ENCRIPTACION CONTRASEÑA
+
+const hasPassword = (pass) => {
+    // ocultar
+    return bcrypt.hashSync(pass, bcrypt.genSaltSync(10), null);
+  };
+  const validatePass = (pass, hashedPass) => {
+    // validar
+    return bcrypt.compareSync(pass, hashedPass);
+  };
 
 //*REDIRIGIR DEPENDIENDO SI EXISTE SESION ACTIVA
 
@@ -75,7 +144,7 @@ app.get("/", (req, res) => {
 
 app.get('/admin', auth, adminAuth, async (req, res) => {
     const data = await DB.getAll('productos.txt')
-    res.render('home', { layout: "productos", productos: data, name: req.session.user })
+    res.render('home', { layout: "productos", productos: data, name: req.session.user, mail: req.session.mail })
 })
 
 app.get('/agregarProductos', (req, res) => {
@@ -107,11 +176,19 @@ app.get('/register', (req, res) => {
 })
 
 app.get('/loginerror', (req, res) => {
-    res.render('home', { layout: "error", mensaje: "USER ERROR LOGIN" });
+    res.render('home', { layout: "error", mensaje: "ERROR AL LOGUEAR EL USUARIO" });
 })
 
 app.get('/registererror', (req, res) => {
-    res.render('home', { layout: "error", mensaje: "USER ERROR SIGNUP" });
+    res.render('home', { layout: "error", mensaje: "ERROR AL REGISTRAR EL USUARIO" });
+})
+
+app.get('/loginfail', (req, res) => {
+    res.render('home', { layout: "error", mensaje: "EL USUARIO NO EXISTE EN EL SISTEMA" });
+})
+
+app.get('/registerfail', (req, res) => {
+    res.render('home', { layout: "error", mensaje: "EMAIL YA REGISTRADO EN EL SISTEMA" });
 })
 
 //* RUTAS POST (ACCIONES)
@@ -127,36 +204,57 @@ app.post('/api/productos', async (req, res) => {
 })
 
 //LOGIN
-app.post('/login', async (req, res) => {
+app.post('/login', 
+passport.authenticate("login", { failureRedirect: "/loginfail" }),
+async (req, res) => {
+    const { email, clave } = req.body
     try{
-        const { email, clave } = req.body
-        const isAdmin = true;
-    
+        /*
         const user = await MongoUsers.findByUser(email, clave)
         console.log(user)
+        if(!user){//*Si el usuario no existe en el sistema
+            console.log("email ya registrado")
+            return res.redirect('/loginfail')
+        }*/
+
+        //*Si el usuario existe
+        req.session.usuario = user.username
         req.session.rank = user.rank
-        req.session.mail = email
-        res.redirect('/admin')
+        req.session.mail = user.email
+        return res.redirect('/admin')
     }catch(e){
-        res.redirect("/?error=true");
+        res.redirect("/loginerror");
     }
-
-    req.session.isAdmin = isAdmin;
-    req.session.user = email
-    req.session.pass = clave
-
-    return res.redirect('/admin')
 })
 
 
 //REGISTRO
-app.post('/register', async (req, res) => {
+app.post('/register',
+passport.authenticate("signup", { failureRedirect: "/registerfail" }),
+ async (req, res) => {
     const { nombre, email, clave } = req.body
-    await MongoUsers.save({ nombre, email, clave })
-    req.session.usuario = nombre
-    req.session.mail = email
-    req.session.rank = 0
-    res.redirect('/admin')
+
+    try{
+        /*
+        const users = await MongoUsers.findAll()
+        const mail = users.find(u => u.email == email)
+        
+        if(mail){//*Si el email ya existe en el sistema
+            console.log("email ya registrado")
+            return res.redirect('/registerfail')
+        }
+        */
+        //*Si el email es nuevo
+        await MongoUsers.save({ nombre, email, clave })
+        req.session.usuario = nombre
+        req.session.mail = email
+        req.session.rank = 1
+        return res.redirect('/admin')
+    }
+    catch(e){
+        res.redirect("/registererror");
+    }
+    
 })
 
 //DESLOGUEO
