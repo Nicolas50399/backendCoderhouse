@@ -5,11 +5,17 @@ const session = require('express-session')
 const bcrypt = require("bcrypt")
 const passport = require("passport")
 const { Strategy } = require("passport-local")
+require('dotenv').config()
+const yargs = require('yargs/yargs')(process.argv.slice(2))
+const args = yargs
+    .default({ puerto: 8080 }).argv
+
+const processRouter = require('./process')
 
 const MongoStore = require('connect-mongo')
 const DAOUsuarioMongo = require("./DB/daos/usuario/DAOUsuarioMongo.js")
 const MongoUsers = new DAOUsuarioMongo();
-const advancedOptions = { useNewUrlParser: true, useUnifiedTopology: true }
+const advancedOptions = { useNewUrlParser: process.env.USENEWURLPARSER, useUnifiedTopology: process.env.USEUNIFIEDTOPOLOGY }
 
 const app = express();
 app.use(express.json());
@@ -34,18 +40,21 @@ app.engine('hbs', hbs)
 
 app.set('view engine', 'hbs');
 
+app.use('/', processRouter)
+
 //middlewares
 
+//*CREDENCIALES!!!!!
 app.use(
     session({
         store: MongoStore.create({
-            mongoUrl: 'mongodb+srv://nico:nico123@backend.vvcutsc.mongodb.net/sesiones',
+            mongoUrl: process.env.MONGOURL,
             mongoOptions: advancedOptions,
-            ttl: 600 //*10 minutos
+            ttl: process.env.TTL //*10 minutos
         }),
-        secret: "secreto",
-        resave: true,
-        saveUninitialized: false
+        secret: process.env.SECRET,
+        resave: process.env.RESAVE,
+        saveUninitialized: process.env.SAVEUNINITIALIZED
     }))
 
 app.use(passport.initialize());
@@ -57,49 +66,49 @@ app.use(passport.session());
 passport.use(
     "signup",
     new Strategy({ passReqToCallback: true }, (req, username, password, done) => {
-      console.log(username, password);
-  
-      const { email } = req.body;
-      MongoUsers.db.findOne({ username }, (err, user) => {
-        console.log(user);
-        console.log(err);
+        console.log(username, password);
 
-        //*Si el usuario ya existe
-        if (user) return done(null, false);
-  
-        Users.create(
-          { username, password: hasPassword(password), email },
-          (err, user) => {
-            if (err) return done(err);
+        const { email } = req.body;
+        MongoUsers.db.findOne({ username }, (err, user) => {
+            console.log(user);
+            console.log(err);
 
-            return done(null, user);
-          }
-        );
-      });
+            //*Si el usuario ya existe
+            if (user) return done(null, false);
+
+            Users.create(
+                { username, password: hasPassword(password), email },
+                (err, user) => {
+                    if (err) return done(err);
+
+                    return done(null, user);
+                }
+            );
+        });
     })
-  );
-  
-  passport.use(
+);
+
+passport.use(
     "login",
     new Strategy({}, (username, password, done) => {
-      MongoUsers.db.findOne({ username }, (err, user) => {
-        if (err) return done(err);
-        //* si el usuario no existe
-        if (!user) return done(null, false);
-        //*si la contraseña es invalida
-        if (!validatePass(password, user.password)) return done(null, false);
-        return done(null, user);
-      });
+        MongoUsers.db.findOne({ username }, (err, user) => {
+            if (err) return done(err);
+            //* si el usuario no existe
+            if (!user) return done(null, false);
+            //*si la contraseña es invalida
+            if (!validatePass(password, user.password)) return done(null, false);
+            return done(null, user);
+        });
     })
-  );
+);
 
-  passport.serializeUser((userObj, done) => {
+passport.serializeUser((userObj, done) => {
     done(null, userObj._id);
-  });
-  
-  passport.deserializeUser((id, done) => {
-    Users.findById(id, done);
-  });
+});
+
+passport.deserializeUser((id, done) => {
+    MongoUsers.db.findById(id, done);
+});
 
 //* AUTORIZACIONES
 
@@ -123,11 +132,11 @@ const adminAuth = (req, res, next) => {
 const hasPassword = (pass) => {
     // ocultar
     return bcrypt.hashSync(pass, bcrypt.genSaltSync(10), null);
-  };
-  const validatePass = (pass, hashedPass) => {
+};
+const validatePass = (pass, hashedPass) => {
     // validar
     return bcrypt.compareSync(pass, hashedPass);
-  };
+};
 
 //*REDIRIGIR DEPENDIENDO SI EXISTE SESION ACTIVA
 
@@ -191,6 +200,8 @@ app.get('/registerfail', (req, res) => {
     res.render('home', { layout: "error", mensaje: "EMAIL YA REGISTRADO EN EL SISTEMA" });
 })
 
+
+
 //* RUTAS POST (ACCIONES)
 
 //AGREGAR PRODUCTO
@@ -204,58 +215,58 @@ app.post('/api/productos', async (req, res) => {
 })
 
 //LOGIN
-app.post('/login', 
-passport.authenticate("login", { failureRedirect: "/loginfail" }),
-async (req, res) => {
-    const { email, clave } = req.body
-    try{
-        /*
-        const user = await MongoUsers.findByUser(email, clave)
-        console.log(user)
-        if(!user){//*Si el usuario no existe en el sistema
-            console.log("email ya registrado")
-            return res.redirect('/loginfail')
-        }*/
+app.post('/login',
+    passport.authenticate("login", { failureRedirect: "/loginfail" }),
+    async (req, res) => {
+        const { email, clave } = req.body
+        try {
+            /*
+            const user = await MongoUsers.findByUser(email, clave)
+            console.log(user)
+            if(!user){//*Si el usuario no existe en el sistema
+                console.log("email ya registrado")
+                return res.redirect('/loginfail')
+            }*/
 
-        //*Si el usuario existe
-        req.session.usuario = user.username
-        req.session.rank = user.rank
-        req.session.mail = user.email
-        return res.redirect('/admin')
-    }catch(e){
-        res.redirect("/loginerror");
-    }
-})
+            //*Si el usuario existe
+            req.session.usuario = user.username
+            req.session.rank = user.rank
+            req.session.mail = user.email
+            return res.redirect('/admin')
+        } catch (e) {
+            res.redirect("/loginerror");
+        }
+    })
 
 
 //REGISTRO
 app.post('/register',
-passport.authenticate("signup", { failureRedirect: "/registerfail" }),
- async (req, res) => {
-    const { nombre, email, clave } = req.body
+    passport.authenticate("signup", { failureRedirect: "/registerfail" }),
+    async (req, res) => {
+        const { nombre, email, clave } = req.body
 
-    try{
-        /*
-        const users = await MongoUsers.findAll()
-        const mail = users.find(u => u.email == email)
-        
-        if(mail){//*Si el email ya existe en el sistema
-            console.log("email ya registrado")
-            return res.redirect('/registerfail')
+        try {
+            /*
+            const users = await MongoUsers.findAll()
+            const mail = users.find(u => u.email == email)
+            
+            if(mail){//*Si el email ya existe en el sistema
+                console.log("email ya registrado")
+                return res.redirect('/registerfail')
+            }
+            */
+            //*Si el email es nuevo
+            await MongoUsers.save({ nombre, email, clave })
+            req.session.usuario = nombre
+            req.session.mail = email
+            req.session.rank = 1
+            return res.redirect('/admin')
         }
-        */
-        //*Si el email es nuevo
-        await MongoUsers.save({ nombre, email, clave })
-        req.session.usuario = nombre
-        req.session.mail = email
-        req.session.rank = 1
-        return res.redirect('/admin')
-    }
-    catch(e){
-        res.redirect("/registererror");
-    }
-    
-})
+        catch (e) {
+            res.redirect("/registererror");
+        }
+
+    })
 
 //DESLOGUEO
 app.post('/logout', (req, res) => {
@@ -266,10 +277,17 @@ app.post('/logout', (req, res) => {
     }, 2000)
 })
 
+
+
+
+
+
+
+
 /*app.get('/logout', (req, res) => {
     res.render('home', { layout: "despedida", name: req.session.user })
     
 })*/
 
 
-app.listen(8081, () => console.log("conectados"));
+app.listen(args.puerto, () => console.log("conectados"));

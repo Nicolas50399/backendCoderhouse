@@ -1,0 +1,37 @@
+<html lang="en">
+{{> head }}
+
+<body style="text-align:center; display: flex; justify-content:center; align-items:center; background-color:palevioletred">
+    <div style="text-align: center;">
+        <h1>GENERADOR DE NUMEROS</h1>
+        <form method="POST" action="/api/randoms">
+            <button class="btn btn-lg btn-success btn-block" type="submit">
+                Generar numeros
+            </button>
+        </form>
+        <table class="table table-dark">
+        <thead>
+          <tr>
+            <th scope="col" style="text-align:center;">Numero</th>
+            <th scope="col" style="text-align:center;">Repeticiones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each resultado}}
+            <tr>
+              <th scope="col" style="text-align:center;">{{this.nro}}</th>
+              <th scope="col" style="text-align:center;">{{this.cant}}</th>
+            </tr>
+
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
