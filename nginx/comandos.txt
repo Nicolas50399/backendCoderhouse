@@ -1,0 +1,20 @@
+En todos los entornos de ejecucion, se detallan con la ruta del archivo js, junto con los argumentos
+que son puerto y modo (FORK/CLUSTER)
+
+NODEMON
+nodemon ./session.js --puerto=8080 --modo=FORK
+nodemon ./session.js --puerto=8081 --modo=CLUSTER
+nodemon ./session.js --puerto=8082 --modo=CLUSTER
+nodemon ./session.js --puerto=8083 --modo=CLUSTER
+nodemon ./session.js --puerto=8084 --modo=CLUSTER
+nodemon ./session.js --puerto=8085 --modo=CLUSTER
+
+NODE (lo mismo que en nodemon, pero cambiandolo por "node")
+
+PM2
+pm2 start ./session.js --puerto=8080 --modo=FORK
+pm2 start ./session.js --puerto=8081 --modo=CLUSTER
+pm2 start ./session.js --puerto=8082 --modo=CLUSTER
+pm2 start ./session.js --puerto=8083 --modo=CLUSTER
+pm2 start ./session.js --puerto=8084 --modo=CLUSTER
+pm2 start ./session.js --puerto=8085 --modo=CLUSTER

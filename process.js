@@ -1,5 +1,6 @@
 const express = require('express');
 const { fork } = require('child_process')
+const numCPUs = require('os').cpus().length
 
 const { Router } = express;
 
@@ -17,7 +18,8 @@ router.get('/info', (req, res) => {
         memTotalRes: process.memoryUsage(),
         pathEjec: process.execPath,
         idProcess: process.pid,
-        carpetaProy: process.cwd()
+        carpetaProy: process.cwd(),
+        cpus: numCPUs
     });
 })
 

@@ -8,7 +8,37 @@ const { Strategy } = require("passport-local")
 require('dotenv').config()
 const yargs = require('yargs/yargs')(process.argv.slice(2))
 const args = yargs
-    .default({ puerto: 8080 }).argv
+    .default({ puerto: 8080, modo: 'FORK' }).argv
+
+
+
+switch (args.puerto) {
+    case "FORK": {
+        require('child_process').spawn('node', ['session.js'])
+    }
+    case "CLUSTER": {
+        const http = require('http')
+        const cluster = require('cluster')
+        const numCPUs = require('os').cpus().length
+        if (cluster.isMaster) {
+            for (let i = 0; i < numCPUs; i++) {
+                cluster.fork()
+            }
+
+            cluster.on('exit', (worker, code, signal) => {
+                console.log(`worker id: ${worker.process.pid} muerto`)
+            })
+        }
+        else {
+            http.createServer((req, res) => {
+                res.writeHead(200)
+                res.end('hola mundo')
+            }).listen(8083)
+            console.log(`worker id: ${worker.process.pid} iniciado`)
+        }
+    }
+    default: { }
+}
 
 const processRouter = require('./process')
 
