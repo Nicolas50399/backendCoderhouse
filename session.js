@@ -17,6 +17,7 @@ switch (args.puerto) {
         require('child_process').spawn('node', ['session.js'])
     }
     case "CLUSTER": {
+        //uso el modulo cluster
         const http = require('http')
         const cluster = require('cluster')
         const numCPUs = require('os').cpus().length
