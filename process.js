@@ -2,26 +2,14 @@ const express = require('express');
 const { fork } = require('child_process')
 const numCPUs = require('os').cpus().length
 
+
+
 const { Router } = express;
 
 const router = Router();
 
 router.use(express.urlencoded({ extended: true }));
 router.use(express.json());
-
-router.get('/info', (req, res) => {
-    res.render('home', {
-        layout: "infoArgs",
-        argsEntrada: process.argv,
-        nombrePlataforma: process.platform,
-        versionNode: process.version,
-        memTotalRes: process.memoryUsage(),
-        pathEjec: process.execPath,
-        idProcess: process.pid,
-        carpetaProy: process.cwd(),
-        cpus: numCPUs
-    });
-})
 
 let cant = 600//100000000
 let result = []

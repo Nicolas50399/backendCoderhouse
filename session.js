@@ -1,4 +1,5 @@
 const express = require('express');
+const crypto = require('crypto')
 //const cookieParser = require('cookie-parser')
 const bodyParser = require('body-parser')
 const session = require('express-session')
@@ -10,17 +11,32 @@ const yargs = require('yargs/yargs')(process.argv.slice(2))
 const args = yargs
     .default({ puerto: 8080, modo: 'FORK' }).argv
 
+const PORT = process.argv[2] || args.puerto
+
+const compression = require('compression')
 
 
+const logger = require("./logger.js")
+
+
+const processRouter = require('./process')
+
+const MongoStore = require('connect-mongo')
+const DAOUsuarioMongo = require("./DB/daos/usuario/DAOUsuarioMongo.js")
+const MongoUsers = new DAOUsuarioMongo();
+const advancedOptions = { useNewUrlParser: process.env.USENEWURLPARSER, useUnifiedTopology: process.env.USEUNIFIEDTOPOLOGY }
+const numCPUs = require('os').cpus().length
 switch (args.puerto) {
     case "FORK": {
+        process.argv[3] = "FORK"
         require('child_process').spawn('node', ['session.js'])
     }
     case "CLUSTER": {
         //uso el modulo cluster
+        process.argv[3] = "CLUSTER"
         const http = require('http')
         const cluster = require('cluster')
-        const numCPUs = require('os').cpus().length
+        
         if (cluster.isMaster) {
             for (let i = 0; i < numCPUs; i++) {
                 cluster.fork()
@@ -41,14 +57,12 @@ switch (args.puerto) {
     default: { }
 }
 
-const processRouter = require('./process')
-
-const MongoStore = require('connect-mongo')
-const DAOUsuarioMongo = require("./DB/daos/usuario/DAOUsuarioMongo.js")
-const MongoUsers = new DAOUsuarioMongo();
-const advancedOptions = { useNewUrlParser: process.env.USENEWURLPARSER, useUnifiedTopology: process.env.USEUNIFIEDTOPOLOGY }
-
 const app = express();
+
+app.use((req, res, next) => {
+    logger.info(`Peticion ${req.method} en ${req.url}`)
+    next()
+})
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -59,6 +73,7 @@ const DB = new db();
 //app.use(cookieParser())
 
 const handlebars = require("express-handlebars");
+const { constants } = require('buffer');
 
 app.set('views', './views/');
 
@@ -183,8 +198,12 @@ app.get("/", (req, res) => {
 //* RUTAS GET (PAGINAS)
 
 app.get('/admin', auth, adminAuth, async (req, res) => {
-    const data = await DB.getAll('productos.txt')
-    res.render('home', { layout: "productos", productos: data, name: req.session.user, mail: req.session.mail })
+    try {
+        const data = await DB.getAll('productos.txt')
+        res.render('home', { layout: "productos", productos: data, name: req.session.user, mail: req.session.mail })
+    } catch (e) {
+        logger.error(`Error en api de productos: ${e}`)
+    }
 })
 
 app.get('/agregarProductos', (req, res) => {
@@ -203,6 +222,7 @@ app.get('/producto/:id', async (req, res) => {
             return res.render('home', { layout: "producto", ...data })
         }
     } catch (e) {
+        logger.error(`Error en api de productos: ${e}`)
         return res.status(404).render('home', { layout: "error" })
     }
 })
@@ -231,18 +251,84 @@ app.get('/registerfail', (req, res) => {
     res.render('home', { layout: "error", mensaje: "EMAIL YA REGISTRADO EN EL SISTEMA" });
 })
 
+app.get('/info', (req, res) => {
+    if(process.argv[3] == "FORK"){
+        console.log(`
+        Argumentos de entrada: ${process.argv}
+        Nombre plataforma: ${process.platform}
+        Version Node: ${process.version}
+        Memoria total reservada: ${process.memoryUsage()}
+        Ruta de ejecucion: ${process.execPath}
+        ID del proceso: ${process.pid}
+        Carpeta de proyecto: ${process.cwd()}
+        Numero de CPUS:: ${numCPUs}
+    `)
+    }
+
+    res.render('home', {
+        layout: "infoArgs",
+        argsEntrada: process.argv,
+        nombrePlataforma: process.platform,
+        versionNode: process.version,
+        memTotalRes: process.memoryUsage(),
+        pathEjec: process.execPath,
+        idProcess: process.pid,
+        carpetaProy: process.cwd(),
+        cpus: numCPUs
+    });
+})
+
+app.get('/infoComprimido', compression(), (req, res) => {
+    if(process.argv[3] == "FORK"){
+        console.log(`
+        Argumentos de entrada: ${process.argv}
+        Nombre plataforma: ${process.platform}
+        Version Node: ${process.version}
+        Memoria total reservada: ${process.memoryUsage()}
+        Ruta de ejecucion: ${process.execPath}
+        ID del proceso: ${process.pid}
+        Carpeta de proyecto: ${process.cwd()}
+        Numero de CPUS:: ${numCPUs}
+    `)
+    }
+    res.render('home', {
+        layout: "infoArgs",
+        argsEntrada: process.argv,
+        nombrePlataforma: process.platform,
+        versionNode: process.version,
+        memTotalRes: process.memoryUsage(),
+        pathEjec: process.execPath,
+        idProcess: process.pid,
+        carpetaProy: process.cwd(),
+        cpus: numCPUs
+    });
+})
+
+app.all("*", (req, res) => {
+    logger.warn(`Peticion metodo: ${req.method}, url: ${req.url} a una ruta inexistente`)
+    res.send({ error: true }).status(500)
+})
+
+
+
 
 
 //* RUTAS POST (ACCIONES)
 
 //AGREGAR PRODUCTO
 app.post('/api/productos', async (req, res) => {
-    const { nombre, marca, precio } = req.body
-    console.log(req.body)
-    const id = await DB.save({ nombre, marca, precio }, 'productos.txt')
-    console.log(id)
-    //res.send({error: false, msg: 'Producto agregado con id' + id})
-    return res.redirect('/agregarProductos')
+    try{
+        const { nombre, marca, precio } = req.body
+        console.log(req.body)
+        const id = await DB.save({ nombre, marca, precio }, 'productos.txt')
+        console.log(id)
+        //res.send({error: false, msg: 'Producto agregado con id' + id})
+        return res.redirect('/agregarProductos')
+    }
+    catch(e){
+        logger.error(`Error en api de productos: ${e}`)
+    }
+    
 })
 
 //LOGIN
@@ -321,4 +407,4 @@ app.post('/logout', (req, res) => {
 })*/
 
 
-app.listen(args.puerto, () => console.log("conectados"));
+app.listen(PORT, () => logger.info(`Servidor escuchando en el puerto ${PORT}`));
