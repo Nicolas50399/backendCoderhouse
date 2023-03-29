@@ -7,14 +7,11 @@
     />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <link rel="icon" href="/docs/4.0/assets/img/favicons/favicon.ico" />
+    
 
     <title>Signin Template for Bootstrap</title>
 
-    <link
-      rel="canonical"
-      href="https://getbootstrap.com/docs/4.0/examples/sign-in/"
-    />
+    
 
     <!-- Bootstrap core CSS -->
     <link
@@ -35,26 +32,26 @@
     <div class="text-center">
       <form class="form-signin" method="POST" action="/login">
       <h1 class="h3 mb-3 font-weight-normal">Iniciar sesión</h1>
-      <label for="inputNombreProducto" class="sr-only">Email</label>
+      <label for="inputEmailUsuario" class="sr-only">Email</label>
       <input
         type="email"
-        id="inputNombreProducto"
+        id="inputEmailUsuario"
         class="form-control"
-        placeholder="Nombre"
+        placeholder="Email"
         required
         autofocus
-        name="email"
+        name="username"
       />
 
-      <label for="inputMarcaProducto" class="sr-only">Contraseña</label>
+      <label for="inputClaveUsuario" class="sr-only">Contraseña</label>
       <input
         type="password"
-        id="inputMarcaProducto"
+        id="inputClaveUsuario"
         class="form-control"
         placeholder="Contraseña"
         required
         autofocus
-        name="clave"
+        name="password"
       />
 
       <button class="btn btn-lg btn-primary btn-block" type="submit">

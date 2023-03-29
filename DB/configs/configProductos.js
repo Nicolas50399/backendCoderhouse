@@ -4,15 +4,12 @@ module.exports = {
       options: {
         useNewUrlParser: true, useUnifiedTopology: true
       },
-      collection: 'users',
+      collection: 'products',
       model: {
         nombre: String,
-        email: String,
-        clave: String,
-        direccion: String,
-        telefono: String,
-        foto: String,
-        rank: Number
+        marca: String,
+        precio: Number,
+        foto: String
       },
     },
   };
