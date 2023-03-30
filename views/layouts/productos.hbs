@@ -14,6 +14,7 @@
             <th scope="col">Nombre</th>
             <th scope="col">Marca</th>
             <th scope="col">Precio</th>
+            <th scope="col"></th>
           </tr>
         </thead>
         <tbody>
@@ -22,6 +23,13 @@
               <th scope="col">{{this.nombre}}</th>
               <th scope="col">{{this.marca}}</th>
               <th scope="col">$ {{this.precio}}</th>
+              <th scope="col">
+                <form method="POST" action="/agregar/{{this._id}}">
+                    <button class="btn btn-lg btn-success btn-block" type="submit">
+                        Agregar
+                    </button>
+                </form>
+              </th>
             </tr>
 
           {{/each}}

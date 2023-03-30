@@ -2,7 +2,7 @@ const express = require('express');
 const crypto = require('crypto')
 
 const bodyParser = require('body-parser')
-
+const { Products } = require('./DB/controllers/productoController');
 
 
 
@@ -23,6 +23,7 @@ const logger = require("./logger.js")
 const processRouter = require('./process')
 const loginRouter = require('./routes/login')
 const productsRouter = require('./routes/gestionProductos')
+const cartRouter = require('./routes/gestionCarrito')
 
 const MongoStore = require('connect-mongo')
 //const DAOUsuarioMongo = require("./DB/daos/usuario/DAOUsuarioMongo.js")
@@ -95,6 +96,7 @@ app.set('view engine', 'hbs');
 app.use('/', processRouter)
 app.use('/', loginRouter)
 app.use('/', productsRouter)
+app.use('/', cartRouter)
 
 //middlewares
 
@@ -164,10 +166,15 @@ app.get("/", (req, res) => {
 
 //* RUTAS GET (PAGINAS)
 
-app.get('/main', auth, adminAuth, async (req, res) => {
+app.get('/main', auth, adminAuth, (req, res) => {
     try {
-        const data = await DB.getAll('productos.txt')
-        res.render('home', { layout: "productos", productos: data, name: req.session.usuario, mail: req.session.mail })
+        //const data = await DB.getAll('productos.txt')
+        Products.find({}, (err, products) => {
+            console.log(products)
+            if(err) logger.error("Error al cargar los productos: " + err)
+            res.render('home', { layout: "productos", productos: products, name: req.session.usuario, mail: req.session.mail })
+        }).lean()
+        
     } catch (e) {
         logger.error(`Error en api de productos: ${e}`)
     }
@@ -255,14 +262,6 @@ app.all("*", (req, res, next) => {
     }
     next()
 })
-
-
-
-
-//* RUTAS POST (ACCIONES)
-
-
-
 
 
 DBConnect(() => {

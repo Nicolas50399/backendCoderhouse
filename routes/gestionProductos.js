@@ -2,6 +2,9 @@ const express = require('express');
 
 const { Router } = express;
 
+const { Products } = require('../DB/controllers/productoController');
+const logger = require('../logger');
+
 const router = Router();
 
 router.use(express.urlencoded({ extended: true }));
@@ -29,13 +32,21 @@ router.get('/agregarProductos', (req, res) => {
 });
 
 //AGREGAR PRODUCTO
-router.post('/api/productos', async (req, res) => {
+router.post('/api/productos', (req, res) => {
     try{
-        const { nombre, marca, precio } = req.body
-        console.log(req.body)
-        const id = await DB.save({ nombre, marca, precio }, 'productos.txt')
-        console.log(id)
-        //res.send({error: false, msg: 'Producto agregado con id' + id})
+        const { nombre, marca, precio, foto } = req.body
+        const newProduct = {
+            nombre: nombre,
+            marca: marca,
+            precio: precio,
+            foto: foto
+        }
+        Products.create(newProduct, (err) => {
+            if(err){
+                logger.error("error al guardar producto: " + err)
+            }
+            logger.info("producto guardado!")
+        })
         return res.redirect('/agregarProductos')
     }
     catch(e){
