@@ -3,7 +3,7 @@ const crypto = require('crypto')
 
 const bodyParser = require('body-parser')
 const { Products } = require('./DB/controllers/productoController');
-
+const { auth, adminAuth, authMW } = require('./routes/auths')
 
 
 
@@ -125,34 +125,6 @@ const { DBConnect, Users } = require('./DB/controllers/usuarioController')
 
 
 
-
-
-
-//* AUTORIZACIONES
-
-const auth = (req, res, next) => {
-    if (req.session.usuario) {
-        next();
-    } else {
-        res.redirect('/login')
-    }
-};
-const adminAuth = (req, res, next) => {
-    if (req.session.rank >= 1) {
-        next();
-    } else {
-        res.status(401).send({ error: true });
-    }
-};
-
-const authMW = (req, res, next) => {
-    req.isAuthenticated() ? next() : res.send({error: true, msg: "no autenticado"})
-}
-
-
-
-
-
 //*REDIRIGIR DEPENDIENDO SI EXISTE SESION ACTIVA
 
 app.get("/", (req, res) => {
@@ -170,7 +142,6 @@ app.get('/main', auth, adminAuth, (req, res) => {
     try {
         //const data = await DB.getAll('productos.txt')
         Products.find({}, (err, products) => {
-            console.log(products)
             if(err) logger.error("Error al cargar los productos: " + err)
             res.render('home', { layout: "productos", productos: products, name: req.session.usuario, mail: req.session.mail })
         }).lean()

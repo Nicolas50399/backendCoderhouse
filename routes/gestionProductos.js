@@ -3,6 +3,7 @@ const express = require('express');
 const { Router } = express;
 
 const { Products } = require('../DB/controllers/productoController');
+const { auth, adminAuth, authMW } = require('./auths')
 const logger = require('../logger');
 
 const router = Router();
@@ -10,7 +11,7 @@ const router = Router();
 router.use(express.urlencoded({ extended: true }));
 router.use(express.json());
 
-router.get('/producto/:id', async (req, res) => {
+router.get('/producto/:id', auth, adminAuth, async (req, res) => {
     const { id } = req.params
     try {
         const data = await DB.getById(id, 'productos.txt')
@@ -27,8 +28,8 @@ router.get('/producto/:id', async (req, res) => {
     }
 })
 
-router.get('/agregarProductos', (req, res) => {
-    res.render('home', { layout: "agregarProductos" });
+router.get('/agregarProductos', auth, adminAuth,  (req, res) => {
+    res.render('home', { layout: "agregarProductos", name: req.session.usuario });
 });
 
 //AGREGAR PRODUCTO

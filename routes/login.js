@@ -85,7 +85,7 @@ passport.use(
     new PassportLocal((username, password, done) => {
         console.log(username)
         console.log(password)
-        Users.findOne({ "email": username }, (err, user) => {
+        Users.findOne({ "nombre": username }, (err, user) => {
             if (err) {
                 console.log("ERROR DE LOGUEO")
                 return done(err);
@@ -159,7 +159,7 @@ router.post('/login',
     passport.authenticate("login", { failureRedirect: "/loginerror" }),
     (req, res) => {
         const {username} = req.body
-        Users.findOne({"email": username}, (err, user) => {
+        Users.findOne({"nombre": username}, (err, user) => {
             req.session.usuario = user.nombre
             req.session.rank = user.rank
             req.session.mail = user.email
