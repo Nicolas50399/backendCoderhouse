@@ -5,15 +5,18 @@ const { Router } = express;
 const cart = require('../containers/ContenedorMemoria')
 const Cart = new cart()
 const { Products } = require('../DB/controllers/productoController');
+const { Mail } = require('../messages/email')
+
 const { auth, adminAuth, authMW } = require('./auths')
 const logger = require('../logger');
+const dotenv = require('dotenv').config()
 
 const router = Router();
 
 router.use(express.urlencoded({ extended: true }));
 router.use(express.json());
 
-router.get('/cart', auth, adminAuth,  (req, res) => {
+router.get('/cart', auth,  (req, res) => {
     res.render('home', { layout: "carrito", productos: Cart.findAll(), name: req.session.usuario });
 })
 
@@ -63,8 +66,12 @@ router.post('/vaciar', (req, res) => {
 
 router.post('/confirmar', (req, res) => {
 
-    Cart.deleteAll()
+    
     //*AVISAR MAIL/WSP ADMIN
+    Mail(process.env.GMAILADMIN, 'Pedido de compra', req.session.usuario, req.session.mail, req.session.telefono, Cart.findAll())
+
+    Cart.deleteAll()
+
     res.redirect('/main')
 })
 

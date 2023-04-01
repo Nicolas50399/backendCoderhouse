@@ -11,7 +11,7 @@ const adminAuth = (req, res, next) => {
     if (req.session.rank == 2) {
         next();
     } else {
-        res.status(401).send({ error: true });
+        res.status(401).send({ error: true, msg: "no es un admin" });
     }
 };
 

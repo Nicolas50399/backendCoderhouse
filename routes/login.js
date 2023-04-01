@@ -4,7 +4,9 @@ const PassportLocal = require("passport-local").Strategy
 const cookieParser = require('cookie-parser')
 const session = require('express-session')
 const bcrypt = require("bcrypt")
-const { DBConnect, Users } = require('../DB/controllers/usuarioController')
+const { DBConnect, Users } = require('../DB/controllers/usuarioController');
+const { Mail } = require('../messages/email');
+const dotenv = require('dotenv').config()
 
 const { Router } = express;
 
@@ -185,6 +187,7 @@ router.post('/register',
         req.session.telefono = telefono
         req.session.foto = foto
         req.session.rank = 1
+        Mail(process.env.GMAILADMIN, 'Registro', username, email, telefono, [])
         res.redirect('/main')
     }
 )

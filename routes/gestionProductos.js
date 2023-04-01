@@ -11,7 +11,7 @@ const router = Router();
 router.use(express.urlencoded({ extended: true }));
 router.use(express.json());
 
-router.get('/producto/:id', auth, adminAuth, async (req, res) => {
+router.get('/producto/:id', auth, async (req, res) => {
     const { id } = req.params
     try {
         const data = await DB.getById(id, 'productos.txt')

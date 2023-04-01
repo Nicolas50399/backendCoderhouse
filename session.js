@@ -4,10 +4,9 @@ const crypto = require('crypto')
 const bodyParser = require('body-parser')
 const { Products } = require('./DB/controllers/productoController');
 const { auth, adminAuth, authMW } = require('./routes/auths')
+const dotenv = require('dotenv').config()
 
 
-
-require('dotenv').config()
 const yargs = require('yargs/yargs')(process.argv.slice(2))
 const args = yargs
     .default({ puerto: 8080, modo: 'FORK' }).argv
@@ -138,7 +137,7 @@ app.get("/", (req, res) => {
 
 //* RUTAS GET (PAGINAS)
 
-app.get('/main', auth, adminAuth, (req, res) => {
+app.get('/main', auth, (req, res) => {
     try {
         //const data = await DB.getAll('productos.txt')
         Products.find({}, (err, products) => {
@@ -151,7 +150,7 @@ app.get('/main', auth, adminAuth, (req, res) => {
     }
 })
 
-app.get('/perfil', auth, adminAuth, (req, res) => {
+app.get('/perfil', auth, (req, res) => {
     try {
         res.render('home', { 
             layout: "miPerfil", 
