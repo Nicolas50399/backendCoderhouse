@@ -5,10 +5,14 @@ const { Router } = express;
 const cart = require('../containers/ContenedorMemoria')
 const Cart = new cart()
 const { Products } = require('../DB/controllers/productoController');
+const { Orders } = require('../DB/controllers/pedidoController');
+
 const { Mail } = require('../messages/email')
 
 const { auth, adminAuth, authMW } = require('./auths')
 const logger = require('../logger');
+const { SMS } = require('../messages/sms');
+const { WSP } = require('../messages/whatsapp');
 const dotenv = require('dotenv').config()
 
 const router = Router();
@@ -67,10 +71,30 @@ router.post('/vaciar', (req, res) => {
 router.post('/confirmar', (req, res) => {
 
     
-    //*AVISAR MAIL/WSP ADMIN
-    Mail(process.env.GMAILADMIN, 'Pedido de compra', req.session.usuario, req.session.mail, req.session.telefono, Cart.findAll())
+    
 
-    Cart.deleteAll()
+    const newOrder = {
+
+        nombreUsuario: req.session.usuario,
+        email: req.session.mail,
+        telefono: req.session.telefono,
+        productos: Cart.findAll()
+    }
+    Orders.create(newOrder, (err) => {
+        if(err){
+            logger.error("error al guardar pedido: " + err)
+        }
+        logger.info("pedido guardado!")
+        //*AVISAR MAIL/WSP ADMIN
+        Mail(process.env.GMAILADMIN, 'Pedido de compra', req.session.usuario, req.session.mail, req.session.telefono, Cart.findAll())
+        WSP(process.env.WSPADMIN, 'Pedido de compra', req.session.usuario, req.session.mail, req.session.telefono, Cart.findAll())
+        //*SMS AL USUARIO
+        SMS(req.session.telefono, 'Pedido realizado')
+
+        Cart.deleteAll()
+    })
+
+    
 
     res.redirect('/main')
 })

@@ -85,14 +85,11 @@ passport.use(
 passport.use(
     "login",
     new PassportLocal((username, password, done) => {
-        console.log(username)
-        console.log(password)
         Users.findOne({ "nombre": username }, (err, user) => {
             if (err) {
                 console.log("ERROR DE LOGUEO")
                 return done(err);
             }
-            console.log(user)
             //* si el usuario no existe
             if (!user){
                 console.log("ERROR, Usuario no existe")

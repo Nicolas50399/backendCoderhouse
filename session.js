@@ -23,6 +23,7 @@ const processRouter = require('./process')
 const loginRouter = require('./routes/login')
 const productsRouter = require('./routes/gestionProductos')
 const cartRouter = require('./routes/gestionCarrito')
+const ordersRouter = require('./routes/gestionPedidos')
 
 const MongoStore = require('connect-mongo')
 //const DAOUsuarioMongo = require("./DB/daos/usuario/DAOUsuarioMongo.js")
@@ -96,6 +97,7 @@ app.use('/', processRouter)
 app.use('/', loginRouter)
 app.use('/', productsRouter)
 app.use('/', cartRouter)
+app.use('/', ordersRouter)
 
 //middlewares
 

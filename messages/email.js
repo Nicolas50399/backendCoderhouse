@@ -1,7 +1,7 @@
-const nodemailer = require('nodemailer')
+const nodemailer = require('nodemailer');
+const logger = require('../logger');
 const dotenv = require('dotenv').config()
-console.log(process.env.GMAIL)
-console.log(process.env.GMAILPASS)
+
 async function Mail(receptor, asunto, usuario, email, telefono, productos){
     const transporter = nodemailer.createTransport({
         service: 'gmail',
@@ -60,10 +60,10 @@ async function Mail(receptor, asunto, usuario, email, telefono, productos){
     
     try {
         const info = await transporter.sendMail(mailOptions)
-        console.log(info)
-        console.log("ENVIADO!")
+        //console.log(info)
+        logger.info("MAIL ENVIADO!")
     }catch(e){
-        console.log("ERROR AL MANDAR MAIL: " + e)
+        logger.info("ERROR AL MANDAR MAIL: " + e)
     }
 }
 
