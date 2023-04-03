@@ -1,12 +1,11 @@
 const express = require('express');
 const passport = require("passport")
+const bcrypt = require("bcrypt")
 const PassportLocal = require("passport-local").Strategy
 const cookieParser = require('cookie-parser')
 const session = require('express-session')
-const bcrypt = require("bcrypt")
-const { DBConnect, Users } = require('../DB/controllers/usuarioController');
-const { Mail } = require('../messages/email');
-const dotenv = require('dotenv').config()
+const { addUser, loginUser, logoutUser, getLogin, getRegister, getLoginError, getRegisterError, getLoginFail, getRegisterFail } = require('../DB/controllers/usuarioController');
+const { Users, passportLogin, passportRegister } = require('../DB/services/usuarioServ');
 
 const { Router } = express;
 
@@ -51,58 +50,17 @@ passport.use(
             rank: 1
         }
         
+        passportRegister(newUser, done)
         
         
         
-        Users.findOne({ email }, (err, user) => {
-
-            if (err){
-                console.log('Error en sign up: ' + err)
-                 return done(err);
-            }
-
-            //*Si el usuario ya existe
-            if (user){
-                console.log('Usuario ya existe')
-                 return done(null, false);
-            }  
-
-            Users.create(
-                newUser,
-                (err, userConId) => {
-                    if (err) {
-                        console.log('Error al guardar usuario: ' + err)
-                        return done(err);
-                    }
-                    console.log('Usuario guardado!')
-                    return done(null, userConId);
-                }
-            );
-        });
     })
 );
 
 passport.use(
     "login",
     new PassportLocal((username, password, done) => {
-        Users.findOne({ "nombre": username }, (err, user) => {
-            if (err) {
-                console.log("ERROR DE LOGUEO")
-                return done(err);
-            }
-            //* si el usuario no existe
-            if (!user){
-                console.log("ERROR, Usuario no existe")
-                return done(null, false);
-            }
-            //*si la contraseña es invalida
-            if (!validatePass(password, user.clave)) {
-                console.log("USUARIO LOGUEADO")
-                return done(null, false);
-            }
-            return done(null, user);
-        });
-        
+        passportLogin(username, password, done)
     })
 );
 
@@ -115,29 +73,17 @@ passport.deserializeUser((id, done) => {
     //done(null, {id: 1, name: "nico"})
 });
 
-router.get('/login', (req, res) => {
-    res.render('home', { layout: "login" });
-})
+router.get('/login', getLogin)
 
-router.get('/register', (req, res) => {
-    res.render('home', { layout: "register" });
-})
+router.get('/register', getRegister)
 
-router.get('/loginerror', (req, res) => {
-    res.render('home', { layout: "error", mensaje: "ERROR AL LOGUEAR EL USUARIO" });
-})
+router.get('/loginerror', getLoginError)
 
-router.get('/registererror', (req, res) => {
-    res.render('home', { layout: "error", mensaje: "ERROR AL REGISTRAR EL USUARIO" });
-})
+router.get('/registererror', getRegisterError)
 
-router.get('/loginfail', (req, res) => {
-    res.render('home', { layout: "error", mensaje: "EL USUARIO NO EXISTE EN EL SISTEMA" });
-})
+router.get('/loginfail', getLoginFail)
 
-router.get('/registerfail', (req, res) => {
-    res.render('home', { layout: "error", mensaje: "EMAIL YA REGISTRADO EN EL SISTEMA" });
-})
+router.get('/registerfail', getRegisterFail)
 
 
 
@@ -148,54 +94,22 @@ const hasPassword = (pass) => {
     // ocultar
     return bcrypt.hashSync(pass, bcrypt.genSaltSync(10), null);
 };
-const validatePass = (pass, hashedPass) => {
-    // validar
-    return bcrypt.compareSync(pass, hashedPass);
-};
+
 
 //LOGIN
 router.post('/login',
     passport.authenticate("login", { failureRedirect: "/loginerror" }),
-    (req, res) => {
-        const {username} = req.body
-        Users.findOne({"nombre": username}, (err, user) => {
-            req.session.usuario = user.nombre
-            req.session.rank = user.rank
-            req.session.mail = user.email
-            req.session.direccion = user.direccion
-            req.session.telefono = user.telefono
-            req.session.foto = user.foto
-
-            res.redirect('/main')
-        })
-        
-    }
+    loginUser
 )
 
 //REGISTRO
 
 router.post('/register',
     passport.authenticate("signup", { failureRedirect: "/registererror" }),
-    (req, res) => {
-        const { username, email, direccion, telefono, foto } = req.body
-        req.session.usuario = username
-        req.session.mail = email
-        req.session.direccion = direccion
-        req.session.telefono = telefono
-        req.session.foto = foto
-        req.session.rank = 1
-        Mail(process.env.GMAILADMIN, 'Registro', username, email, telefono, [])
-        res.redirect('/main')
-    }
+    addUser
 )
 
 //DESLOGUEO
-router.post('/logout', (req, res) => {
-    //res.redirect('/logout')
-    req.session.destroy()
-    setTimeout(() => {
-        res.redirect('/login')
-    }, 2000)
-})
+router.post('/logout', logoutUser)
 
 module.exports = router

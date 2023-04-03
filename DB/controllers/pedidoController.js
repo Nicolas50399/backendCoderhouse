@@ -1,7 +1,27 @@
-const mongoose = require("mongoose")
+const logger = require("../../logger.js")
+const { Orders, deleteOrder, acceptOrder, getOrders } = require("../services/pedidoServ.js")
 
-const configPedidos  = require("../configs/configPedidos.js")
+async function getPedidos(req, res){
+    try {
+        await getOrders(res)
+        
+    } catch (e) {
+        logger.error(`Error en api de pedidos: ${e}`)
+    }
+}
 
-const Orders = mongoose.model(configPedidos.mongoDB.collection, configPedidos.mongoDB.model)
+async function acceptPedido(req, res){
+    const { id } = req.params
+    await acceptOrder(id)
+    res.redirect('/pedidos')
+}
 
-module.exports = { Orders }
+async function declinePedido(req, res){
+    const { id } = req.params
+
+    await deleteOrder(id)
+
+    res.redirect('/pedidos')
+}
+
+module.exports = { Orders, getPedidos, acceptPedido, declinePedido }

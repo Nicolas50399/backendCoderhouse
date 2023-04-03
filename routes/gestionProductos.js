@@ -2,15 +2,14 @@ const express = require('express');
 
 const { Router } = express;
 
-const { Products } = require('../DB/controllers/productoController');
+const { addProducto, getAgregarProducto } = require('../DB/controllers/productoController');
 const { auth, adminAuth, authMW } = require('./auths')
-const logger = require('../logger');
 
 const router = Router();
 
 router.use(express.urlencoded({ extended: true }));
 router.use(express.json());
-
+/*
 router.get('/producto/:id', auth, async (req, res) => {
     const { id } = req.params
     try {
@@ -27,33 +26,9 @@ router.get('/producto/:id', auth, async (req, res) => {
         return res.status(404).render('home', { layout: "error" })
     }
 })
+*/
 
-router.get('/agregarProductos', auth, adminAuth,  (req, res) => {
-    res.render('home', { layout: "agregarProductos", name: req.session.usuario });
-});
-
-//AGREGAR PRODUCTO
-router.post('/api/productos', (req, res) => {
-    try{
-        const { nombre, marca, precio, foto } = req.body
-        const newProduct = {
-            nombre: nombre,
-            marca: marca,
-            precio: precio,
-            foto: foto
-        }
-        Products.create(newProduct, (err) => {
-            if(err){
-                logger.error("error al guardar producto: " + err)
-            }
-            logger.info("producto guardado!")
-        })
-        return res.redirect('/agregarProductos')
-    }
-    catch(e){
-        logger.error(`Error en api de productos: ${e}`)
-    }
-    
-})
+router.get('/agregarProductos', auth, adminAuth, getAgregarProducto);
+router.post('/api/productos', addProducto)
 
 module.exports = router
