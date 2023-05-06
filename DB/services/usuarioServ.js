@@ -1,11 +1,14 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt")
 const configUsuarios  = require("../configs/configUsuarios.js");
-const Users = mongoose.model(configUsuarios.mongoDB.collection, configUsuarios.mongoDB.model)
+//const Users = mongoose.model(configUsuarios.mongoDB.collection, configUsuarios.mongoDB.model)
 const { getOne, add } = require('../database/mongodb')
+const DAOUsuarioMongo = require("../daos/usuario/DAOUsuarioMongo.js");
+
+const Users = new DAOUsuarioMongo()
 
 async function initializeUser(req, res, username){
-    await getOne(Users, {"nombre": username}, (err, user) => {
+    await Users.findByFilters({"nombre": username}, (err, user) => {
         req.session.usuario = user.nombre
         req.session.rank = user.rank
         req.session.mail = user.email
@@ -18,7 +21,7 @@ async function initializeUser(req, res, username){
 }
 
 async function passportLogin(username, password, done){
-    await getOne(Users, { "nombre": username }, (err, user) => {
+    await Users.findByFilters({ "nombre": username }, (err, user) => {
         if (err) {
             console.log("ERROR DE LOGUEO")
             return done(err);
@@ -38,7 +41,7 @@ async function passportLogin(username, password, done){
 }
 
 async function passportRegister(newUser, done){
-    await getOne(Users, { "email": newUser.email }, async (err, user) => {
+    await Users.findByFilters({ "email": newUser.email }, async (err, user) => {
 
         if (err){
             console.log('Error en sign up: ' + err)
@@ -49,10 +52,8 @@ async function passportRegister(newUser, done){
         if (user){
             console.log('Usuario ya existe')
              return done(null, false);
-        }  
-
-        await add(Users,
-            newUser,
+        } 
+        await Users.save(newUser,
             (err, userConId) => {
                 if (err) {
                     console.log('Error al guardar usuario: ' + err)
@@ -60,8 +61,7 @@ async function passportRegister(newUser, done){
                 }
                 console.log('Usuario guardado!')
                 return done(null, userConId);
-            }
-        );
+            });
     });
 }
 

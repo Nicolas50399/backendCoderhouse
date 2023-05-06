@@ -21,7 +21,7 @@ router.use(session({
     cookie: {
         httpOnly: false,
         secure: false,
-        maxAge: 60000
+        maxAge: 300000
     },
     resave: true,
     saveUninitialized: true
@@ -69,7 +69,7 @@ passport.serializeUser((userObj, done) => {
 });
 
 passport.deserializeUser((id, done) => {
-    Users.findById(id, done);
+    Users.findById(id, done)
     //done(null, {id: 1, name: "nico"})
 });
 

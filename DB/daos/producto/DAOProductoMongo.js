@@ -1,20 +1,9 @@
-import ContenedorMongo from "../../containers/contenedorMongo.js";
+const ContenedorMongo = require("../../containers/contenedorMongo.js");
+const configProductos  = require("../../configs/configProductos.js")
 
 class DAOProductoMongo extends ContenedorMongo {
   constructor() {
-    // * super = padre/ContenedorMongo
-    super("producto", {
-      timestamp: Date,
-      nombre: String,
-      descripcion: String,
-      foto_url: String,
-      precio: Number,
-      stock: Number
-    });
+    super(configProductos.mongoDB.collection, configProductos.mongoDB.model);
   }
-  // async findByName(name) {
-  //   console.log(this.db);
-  //   return await this.db.findOne({ name });
-  // }
 }
-export default DAOProductoMongo;
+module.exports = DAOProductoMongo;

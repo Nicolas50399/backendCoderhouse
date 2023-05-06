@@ -9,7 +9,7 @@ async function getAllCart(){
 }
 
 async function addProductCart(id){
-    await getOne(Products, {_id: id}, async (err, product) => {
+    await Products.findByFilters({_id: id}, async (err, product) => {
         if(err){
             logger.error("error al encontrar el producto: " + err)
         }
@@ -31,7 +31,6 @@ async function addProductCart(id){
             logger.info("Producto agregado!")
         }
     })
-    
 }
 
 async function removeProductCart(id){
