@@ -2,7 +2,7 @@
 const logger = require("../../logger.js")
 
 
-const { newProducto, Products, findProductos, allProducts } = require("../services/productoServ.js")
+const { newProducto, Products, findProductos, allProducts, oneProduct, deleteProduct, updateProduct } = require("../services/productoServ.js")
 
 async function getProductos(req, res){
     try {
@@ -12,12 +12,22 @@ async function getProductos(req, res){
     }
 }
 
+async function getProducto(req, res){
+    try {
+        await oneProduct(req, res)
+    } catch(e){
+        logger.error(`Error en api de productos: ${e}`)
+    }
+}
+
 async function addProducto(req, res){
     try{
-        const { nombre, marca, precio, foto } = req.body
+        const { nombre, marca, descripcion, categoria, precio, foto } = req.body
         const newProduct = {
             nombre: nombre,
+            descripcion: descripcion,
             marca: marca,
+            categoria: categoria,
             precio: precio,
             foto: foto
         }
@@ -33,4 +43,20 @@ function getAgregarProducto(req, res){
     res.render('home', { layout: "agregarProductos", name: req.session.usuario });
 }
 
-module.exports = { getProductos, addProducto, getAgregarProducto }
+async function removeProducto(req, res){
+    try{
+        await deleteProduct(req, res)
+    } catch(e){
+        logger.error(`Error en api de productos: ${e}`)
+    }
+}
+
+async function setProducto(req, res){
+    try{
+        await updateProduct(req, res)
+    } catch(e){
+        logger.error(`Error en api de productos: ${e}`)
+    }
+}
+
+module.exports = { getProductos, addProducto, getAgregarProducto, getProducto, removeProducto, setProducto }

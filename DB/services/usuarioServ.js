@@ -15,7 +15,7 @@ async function initializeUser(req, res, username){
         req.session.direccion = user.direccion
         req.session.telefono = user.telefono
         req.session.foto = user.foto
-
+        req.session.pais = user.pais
         res.redirect('/main')
     })
 }

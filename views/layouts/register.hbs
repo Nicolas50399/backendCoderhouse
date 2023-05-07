@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    
+
 
     <title>Registro</title>
 
-    
+
 
     <!-- Bootstrap core CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -20,8 +20,8 @@
 </head>
 
 <body>
-    <div class="text-center"> 
-        
+    <div class="text-center">
+
         <form class="form-signin" role="form" method="POST" action="/register">
             <h1 class="h3 mb-3 font-weight-normal">Registro</h1>
             <label for="inputNombreUsuario" class="sr-only">Nombre</label>
@@ -35,18 +35,36 @@
             <label for="inputClaveUsuario" class="sr-only">Contraseña</label>
             <input type="password" id="inputClaveUsuario" class="form-control" placeholder="Contraseña" required
                 autofocus name="password" />
-            
+
             <label for="inputDireccionUsuario" class="sr-only">Dirección</label>
-            <input type="text" id="inputDireccionUsuario" class="form-control" placeholder="Dirección" required autofocus
-                name="direccion" />
-            
+            <input type="text" id="inputDireccionUsuario" class="form-control" placeholder="Dirección" required
+                autofocus name="direccion" />
+
             <label for="inputTelefonoUsuario" class="sr-only">Teléfono</label>
-            <input type="text" id="inputTelefonoUsuario" class="form-control" placeholder="Teléfono" required autofocus
+            <br>
+            <select class="form-select" aria-label="Default select example" id="inputPaisUsuario"
+                name="pais">
+                <option selected>Pais</option>
+                <option value="argentina">Argentina (d)</option>
+                <option value="bolivia">Bolivia (+591)</option>
+                <option value="brasil">Brasil (+55)</option>
+                <option value="chile">Chile (+56)</option>
+                <option value="colombia">Colombia (+57)</option>
+                <option value="ecuador">Ecuador (+593)</option>
+                <option value="espania">España (+34)</option>
+                <option value="mexico">Mexico (+52)</option>
+                <option value="paraguay">Paraguay (+595)</option>
+                <option value="peru">Perú (+51)</option>
+                <option value="uruguay">Uruguay (+598)</option>
+                <option value="venezuela">Venezuela (+58)</option>
+            </select>
+            <input type="text" id="inputTelefonoUsuario" class="form-control" placeholder="Teléfono (sin prefijo)" required autofocus
                 name="telefono" />
-            
+
             <label for="inputFotoUsuario" class="form-label">Foto</label>
-            <input class="form-control form-control-lg" id="inputFotoUsuario" type="file" placeholder="Foto" name="foto">
-            
+            <input class="form-control form-control-lg" id="inputFotoUsuario" type="file" placeholder="Foto"
+                name="foto">
+
             <button class="btn btn-lg btn-primary btn-block" type="submit" style="margin-top: 2rem;">
                 Registradora
             </button>
@@ -54,7 +72,7 @@
         </form>
         <a class="btn btn-lg btn-success btn-block" href="/login">
             Login
-      </a>
+        </a>
     </div>
 
 

@@ -7,7 +7,9 @@ module.exports = {
       collection: 'products',
       model: {
         nombre: String,
+        descripcion: String,
         marca: String,
+        categoria: String,
         precio: Number,
         foto: String
       },

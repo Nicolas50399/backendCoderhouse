@@ -14,7 +14,7 @@ function DBConnect(cb){
 
 
 async function addUser(req, res){
-    const { username, email, direccion, telefono, foto } = req.body
+    const { username, email, direccion, telefono, foto, pais } = req.body
 
     req.session.usuario = username
     req.session.mail = email
@@ -22,6 +22,7 @@ async function addUser(req, res){
     req.session.telefono = telefono
     req.session.foto = foto
     req.session.rank = 1
+    req.session.pais = pais
     await Mail(process.env.GMAILADMIN, 'Registro', username, email, telefono, [])
     res.redirect('/main')
 }

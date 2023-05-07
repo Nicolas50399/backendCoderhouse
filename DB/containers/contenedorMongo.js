@@ -65,6 +65,14 @@ class ContenedorMongo {
       throw new Error(e);
     } 
   }
+
+  async updateByFilters(filters, updates){
+    try {
+      await this.db.updateOne({filters}, {$set:updates}).clone();
+    } catch (e) {
+      throw new Error(e);
+    }
+  }
 }
 
 module.exports = ContenedorMongo;

@@ -10,6 +10,7 @@ module.exports = {
         email: String,
         clave: String,
         direccion: String,
+        pais: String,
         telefono: String,
         foto: String,
         rank: Number

@@ -33,6 +33,7 @@ async function confirmPedido(req, res){
         nombreUsuario: req.session.usuario,
         email: req.session.mail,
         telefono: req.session.telefono,
+        pais: req.session.pais,
         productos: await getAllCart()
     }
     await addOrder(newOrder)

@@ -36,9 +36,9 @@ async function addOrder(order){
         logger.info("pedido guardado!")
         //*AVISAR MAIL/WSP ADMIN
         await Mail(process.env.GMAILADMIN, 'Pedido de compra', order.nombreUsuario, order.email, order.telefono, order.productos)
-        await WSP(process.env.WSPADMIN, 'Pedido de compra', order.nombreUsuario, order.email, order.telefono, order.productos)
+        await WSP(process.env.WSPADMIN, 'Pedido de compra', order.nombreUsuario, order.email, order.telefono, order.productos, order.pais)
         //*SMS AL USUARIO
-        await SMS(order.telefono, 'Pedido realizado')
+        await SMS(order.telefono, 'Pedido realizado', order.pais)
 
         await Cart.deleteAll()
     });

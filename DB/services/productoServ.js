@@ -31,5 +31,50 @@ async function newProducto(producto){
     })
 }
 
+async function oneProduct(req, res){
+    const { id } = req.params
+    await Products.findByFilters({_id: id}, async (err, product) => {
+        if(err){
+            logger.error("error al encontrar el pedido: " + err)
+        }
+        if(!product){
+            logger.error("El pedido no se encuentra en el sistema ")
+        }
+        res.render('home', { 
+            layout: "producto", 
+            nombre: product.nombre, 
+            descripcion: product.descripcion, 
+            foto: product.foto,
+            marca: product.marca,
+            categoria: product.categoria,
+            precio: product.precio
+         })
+    })
+}
 
-module.exports = { Products, newProducto, allProducts }
+
+
+async function deleteProduct(req, res){
+    const { id } = req.params
+    await Products.deleteByFilters({_id: id}, (err) => {
+        if(err) logger.error('Error al borrar el producto: ' + err)
+        logger.info('Producto borrado exitosamente!')
+        res.redirect('/main')
+    })
+}
+
+async function updateProduct(req, res){
+    const { id } = req.params
+    const { nombreM, marcaM, descripcionM, categoriaM, precioM } = req.body
+    await Products.updateByFilters({_id: id}, {
+        nombre: nombreM,
+        marca: marcaM,
+        descripcion: descripcionM,
+        categoria: categoriaM,
+        precio: precioM
+    })
+    res.redirect('/main')
+}
+
+
+module.exports = { Products, newProducto, allProducts, oneProduct, deleteProduct, updateProduct }
