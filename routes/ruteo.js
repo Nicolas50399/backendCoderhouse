@@ -17,10 +17,11 @@ const { getProductos } = require('../DB/controllers/productoController');
 const logger = require('../logger');
 const { auth } = require('./auths');
 const compression = require('compression');
+const { getProfile } = require('../DB/controllers/usuarioController');
+const path = require('path');
 
 
 const numCPUs = require('os').cpus().length
-
 
 router.use('/', loginRouter)
 router.use('/', productsRouter)
@@ -41,20 +42,7 @@ router.get("/", (req, res) => {
 
 router.get('/main', auth, getProductos)
 
-router.get('/perfil', auth, (req, res) => {
-    try {
-        res.render('home', { 
-            layout: "miPerfil", 
-            name: req.session.usuario, 
-            mail: req.session.mail,
-            adress: req.session.direccion,
-            phone: req.session.telefono,
-            foto: req.session.foto
-         })
-    } catch (e) {
-        logger.error(`Error en api de productos: ${e}`)
-    }
-})
+router.get('/perfil', auth, getProfile)
 
 
 

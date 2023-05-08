@@ -4,12 +4,42 @@ const bcrypt = require("bcrypt")
 const PassportLocal = require("passport-local").Strategy
 const cookieParser = require('cookie-parser')
 const session = require('express-session')
-const { addUser, loginUser, logoutUser, getLogin, getRegister, getLoginError, getRegisterError, getLoginFail, getRegisterFail } = require('../DB/controllers/usuarioController');
+const { addUser, loginUser, logoutUser, getLogin, getRegister, getLoginError, getRegisterError, getLoginFail, getRegisterFail, setUserImage } = require('../DB/controllers/usuarioController');
 const { Users, passportLogin, passportRegister } = require('../DB/services/usuarioServ');
 
 const { Router } = express;
 
 const router = Router();
+
+const multer = require('multer');
+const path = require('path')
+let imageUserName
+
+const storage = multer.diskStorage({
+    destination: path.join(__dirname, "../uploads/users"),
+    filename: function (req, file, cb) {
+        // generate the public name, removing problematic characters
+        const originalName = encodeURIComponent(path.parse(file.originalname).name).replace(/[^a-zA-Z0-9]/g, '')
+        const timestamp = Date.now()
+        const extension = path.extname(file.originalname).toLowerCase()
+        imageUserName = originalName + '_' + timestamp + extension
+        cb(null, imageUserName)
+    }
+})
+
+const uploadUser = multer({
+    storage: storage,
+    limits: { fileSize: 1 * 1024 * 1024 }, // 1 Mb
+    fileFilter: (req, file, callback) => {
+        const acceptableExtensions = ['png', 'jpg', 'jpeg', 'jpg']
+        if (!(acceptableExtensions.some(extension => 
+            path.extname(file.originalname).toLowerCase() === `.${extension}`)
+        )) {
+            return callback(new Error(`Extension no permitida, las aceptadas son ${acceptableExtensions.join(',')}`))
+        }
+        callback(null, true)
+    }
+}).single('foto')
 
 router.use(express.urlencoded({ extended: true }));
 router.use(express.json());
@@ -30,14 +60,10 @@ router.use(session({
 router.use(passport.initialize());
 router.use(passport.session());
 
-
-
 passport.use(
     "signup",
     new PassportLocal({ passReqToCallback: true }, (req, username, password, done) => {
-        
         const {email, direccion, telefono, foto} = req.body
-        
         
         
         const newUser = {
@@ -46,12 +72,12 @@ passport.use(
             clave: hasPassword(password),
             direccion: direccion,
             telefono: telefono,
-            foto: foto,
+            foto: imageUserName,
             rank: 1
         }
         
         passportRegister(newUser, done)
-        
+        setUserImage(imageUserName)
         
         
     })
@@ -105,6 +131,7 @@ router.post('/login',
 //REGISTRO
 
 router.post('/register',
+    uploadUser,
     passport.authenticate("signup", { failureRedirect: "/registererror" }),
     addUser
 )

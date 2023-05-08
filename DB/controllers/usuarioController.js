@@ -5,6 +5,8 @@ const dotenv = require('dotenv').config()
 const configUsuarios  = require("../configs/configUsuarios.js");
 const { initializeUser } = require("../services/usuarioServ.js");
 
+
+
 function DBConnect(cb){
     mongoose.connect(configUsuarios.mongoDB.uri, configUsuarios.mongoDB.options, (err) => {
         if(err) console.log(err);
@@ -13,15 +15,34 @@ function DBConnect(cb){
 }
 
 
+
+function getProfile(req, res){
+    try {
+        res.render('home', { 
+            layout: "miPerfil", 
+            name: req.session.usuario, 
+            mail: req.session.mail,
+            adress: req.session.direccion,
+            phone: req.session.telefono,
+            foto: req.session.foto
+         })
+    } catch (e) {
+        logger.error(`Error en api de usuarios: ${e}`)
+    }
+}
+let userImage
+function setUserImage(img){
+    userImage = img
+}
+
 async function addUser(req, res){
     const { username, email, direccion, telefono, foto, pais } = req.body
-
     req.session.usuario = username
     req.session.mail = email
     req.session.direccion = direccion
     req.session.telefono = telefono
-    req.session.foto = foto
     req.session.rank = 1
+    req.session.foto = userImage
     req.session.pais = pais
     await Mail(process.env.GMAILADMIN, 'Registro', username, email, telefono, [])
     res.redirect('/main')
@@ -58,4 +79,4 @@ function getRegisterFail(req, res){
     res.render('home', { layout: "error", mensaje: "EMAIL YA REGISTRADO EN EL SISTEMA" });
 }
 
-module.exports = { DBConnect, addUser, loginUser, logoutUser, getLogin, getRegister, getLoginError, getRegisterError, getLoginFail, getRegisterFail }
+module.exports = { DBConnect, addUser, loginUser, logoutUser, getLogin, getRegister, getLoginError, getRegisterError, getLoginFail, getRegisterFail, getProfile, setUserImage }

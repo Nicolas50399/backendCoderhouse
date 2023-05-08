@@ -1,4 +1,4 @@
-<html lang="en">
+<html lang="en" style="text-align: center;">
 {{> head }}
 
 <body>
@@ -9,7 +9,7 @@
     <h1>Bienvenido {{name}}</h1>
     <h2>Email: {{mail}}</h2>
     <h1 class="mt-5">Productos</h1>
-    <table class="table table-dark">
+    <table class="table table-dark" style="text-align: center;">
       <thead>
         <tr>
           <th scope="col">Nombre</th>
@@ -25,9 +25,9 @@
             <p>
               {{this.nombre}}
             </p>
-            <img src="images/{{this.foto}}" alt="IMG PRODUCTO" width="70%" height="70%">
+            <img src="images/products/{{this.foto}}" alt="IMG PRODUCTO" width="70%" height="70%">
           </th>
-          <th scope="col">{{this.marca}}</th>
+          <th scope="col" style="">{{this.marca}}</th>
           <th scope="col">$ {{this.precio}}</th>
           <th scope="col">
             <a href="/producto/{{this._id}}" type="submit">Ver detalles</a>
@@ -45,20 +45,20 @@
                 </button>
               </form>
               <!-- Button trigger modal -->
-              <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#exampleModal2"
+              <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#exampleModal{{this._id}}"
                 style="height: 47">
                 Modificar
               </button>
 
               <!-- Modal -->
-              <div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel"
+              <div class="modal fade" id="exampleModal{{this._id}}" tabindex="-1" aria-labelledby="exampleModalLabel"
                 aria-hidden="true" style="color: black">
                 <div class="modal-dialog">
                   <div class="modal-content">
                     <div class="modal-header">
                       <h1 class="modal-title fs-5" id="exampleModalLabel">Modificar Producto</h1>
                     </div>
-                    <form method="POST" action="/modificar/{{this._id}}" style="margin: auto;">
+                    <form method="POST" action="/modificar/{{this._id}}" enctype="multipart/form-data" style="margin: auto;">
                       <div class="modal-body">
                         <label for="inputNombreProducto" class="sr-only">Nombre</label>
                         <input type="text" id="inputNombreProducto" class="form-control" placeholder="{{this.nombre}}"
@@ -87,7 +87,7 @@
                           required name="precioM" />
                         <label for="inputFotoUsuario" class="form-label">Foto</label>
                         <input class="form-control form-control-lg" id="inputFotoProducto" type="file"
-                          placeholder="{{this.foto}}" name="fotoM">
+                          placeholder="{{this.foto}}" name="foto">
                       </div>
                       <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
@@ -111,11 +111,7 @@
     </a>
   </main>
 
-  <footer class="footer">
-    <div class="container">
-      <span class="text-muted">hola mundirijillo.</span>
-    </div>
-  </footer>
+  {{> footer}}
 
   <!-- Bootstrap core JavaScript
     ================================================== -->

@@ -1,0 +1,11 @@
+*{
+    box-sizing: border-box;
+    margin: 0;
+    text-align: center;
+}
+body{
+    background-image: linear-gradient(to left, rgb(205, 67, 212), rgb(111, 188, 219));
+}
+.foot{
+    background-color: rgb(86, 83, 83);
+}

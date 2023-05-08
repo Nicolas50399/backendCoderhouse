@@ -7,8 +7,12 @@ const DAOProductoMongo = require("../daos/producto/DAOProductoMongo.js");
 const MyProductFactory = require("../factory/MyProductFactory.js");
 const RepoProductos = require("../repository/repoProductos.js");
 
+
+
 //const RepoProducts = new RepoProductos()
 const Products = new DAOProductoMongo()
+
+
 
 async function allProducts(req, res){
     /*await RepoProducts.getAll((err, products) => {
@@ -63,15 +67,18 @@ async function deleteProduct(req, res){
     })
 }
 
-async function updateProduct(req, res){
+async function updateProduct(req, res, imageName){
+    
     const { id } = req.params
+
     const { nombreM, marcaM, descripcionM, categoriaM, precioM } = req.body
     await Products.updateByFilters({_id: id}, {
         nombre: nombreM,
         marca: marcaM,
         descripcion: descripcionM,
         categoria: categoriaM,
-        precio: precioM
+        precio: precioM,
+        foto: imageName
     })
     res.redirect('/main')
 }

@@ -68,7 +68,7 @@ class ContenedorMongo {
 
   async updateByFilters(filters, updates){
     try {
-      await this.db.updateOne({filters}, {$set:updates}).clone();
+      await this.db.updateOne(filters, {$set:updates}).clone();
     } catch (e) {
       throw new Error(e);
     }

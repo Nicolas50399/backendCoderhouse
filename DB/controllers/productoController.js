@@ -2,9 +2,10 @@ const logger = require("../../logger.js")
 const multer = require('multer');
 const path = require('path')
 let imageName
+const { newProducto, Products, findProductos, allProducts, oneProduct, deleteProduct, updateProduct } = require("../services/productoServ.js")
 
 const storage = multer.diskStorage({
-    destination: path.join(__dirname, '../uploads'),
+    destination: path.join(__dirname, "../../uploads/products"),
     filename: function (req, file, cb) {
         // generate the public name, removing problematic characters
         const originalName = encodeURIComponent(path.parse(file.originalname).name).replace(/[^a-zA-Z0-9]/g, '')
@@ -29,7 +30,6 @@ const upload = multer({
     }
 }).single('foto')
 
-const { newProducto, Products, findProductos, allProducts, oneProduct, deleteProduct, updateProduct } = require("../services/productoServ.js")
 
 async function getProductos(req, res){
     try {
@@ -81,10 +81,10 @@ async function removeProducto(req, res){
 
 async function setProducto(req, res){
     try{
-        await updateProduct(req, res)
+        await updateProduct(req, res, imageName)
     } catch(e){
         logger.error(`Error en api de productos: ${e}`)
     }
 }
 
-module.exports = { getProductos, addProducto, getAgregarProducto, getProducto, removeProducto, setProducto, upload }
+module.exports = { getProductos, addProducto, getAgregarProducto, getProducto, removeProducto, setProducto, upload, imageName }
