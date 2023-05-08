@@ -1,6 +1,33 @@
-
 const logger = require("../../logger.js")
+const multer = require('multer');
+const path = require('path')
+let imageName
 
+const storage = multer.diskStorage({
+    destination: path.join(__dirname, '../uploads'),
+    filename: function (req, file, cb) {
+        // generate the public name, removing problematic characters
+        const originalName = encodeURIComponent(path.parse(file.originalname).name).replace(/[^a-zA-Z0-9]/g, '')
+        const timestamp = Date.now()
+        const extension = path.extname(file.originalname).toLowerCase()
+        imageName = originalName + '_' + timestamp + extension
+        cb(null, imageName)
+    }
+})
+
+const upload = multer({
+    storage: storage,
+    limits: { fileSize: 1 * 1024 * 1024 }, // 1 Mb
+    fileFilter: (req, file, callback) => {
+        const acceptableExtensions = ['png', 'jpg', 'jpeg', 'jpg']
+        if (!(acceptableExtensions.some(extension => 
+            path.extname(file.originalname).toLowerCase() === `.${extension}`)
+        )) {
+            return callback(new Error(`Extension no permitida, las aceptadas son ${acceptableExtensions.join(',')}`))
+        }
+        callback(null, true)
+    }
+}).single('foto')
 
 const { newProducto, Products, findProductos, allProducts, oneProduct, deleteProduct, updateProduct } = require("../services/productoServ.js")
 
@@ -23,13 +50,14 @@ async function getProducto(req, res){
 async function addProducto(req, res){
     try{
         const { nombre, marca, descripcion, categoria, precio, foto } = req.body
+        console.log(req.file)
         const newProduct = {
             nombre: nombre,
             descripcion: descripcion,
             marca: marca,
             categoria: categoria,
             precio: precio,
-            foto: foto
+            foto: imageName
         }
         await newProducto(newProduct)
         return res.redirect('/agregarProductos')
@@ -59,4 +87,4 @@ async function setProducto(req, res){
     }
 }
 
-module.exports = { getProductos, addProducto, getAgregarProducto, getProducto, removeProducto, setProducto }
+module.exports = { getProductos, addProducto, getAgregarProducto, getProducto, removeProducto, setProducto, upload }

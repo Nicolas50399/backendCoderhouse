@@ -21,7 +21,12 @@
       <tbody>
         {{#each productos}}
         <tr>
-          <th scope="col">{{this.nombre}}</th>
+          <th scope="col">
+            <p>
+              {{this.nombre}}
+            </p>
+            <img src="images/{{this.foto}}" alt="IMG PRODUCTO" width="70%" height="70%">
+          </th>
           <th scope="col">{{this.marca}}</th>
           <th scope="col">$ {{this.precio}}</th>
           <th scope="col">
