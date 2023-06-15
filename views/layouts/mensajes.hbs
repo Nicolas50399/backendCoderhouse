@@ -1,0 +1,45 @@
+<html lang="en" style="text-align: center;">
+  {{> head }}
+  <body>
+ {{> hMensajes}}
+
+    <!-- Begin page content -->
+    <main role="main" class="container" style="text-align: center;display:flex; flex-direction:column; justify-content:center; align-items:center">
+        <h1>MENSAJES</h1>
+      <form class="form-signin" onsubmit="return addMessage(this)">
+      <h1 class="h3 mb-3 font-weight-normal">Nuevo mensaje</h1>
+      <label for="inputMensaje" class="sr-only">Nombre</label>
+      <input
+        type="text"
+        id="inputMensaje"
+        class="form-control"
+        placeholder="Mensaje"
+        required
+        autofocus
+      />
+      <button class="btn btn-lg btn-primary btn-block" type="submit" value="Enviar">
+        Enviar
+      </button>
+    </form>
+    </main>
+
+   {{> footer}}
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script
+      src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+      integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://getbootstrap.com/docs/4.0/assets/js/vendor/popper.min.js"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>

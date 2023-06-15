@@ -7,12 +7,13 @@ const router = Router();
 router.use(express.urlencoded({ extended: true }));
 router.use(express.json());
 
-const loginRouter = require('./login')
-const productsRouter = require('./gestionProductos')
-const cartRouter = require('./gestionCarrito')
+const loginRouter = require('./login');
+const productsRouter = require('./gestionProductos');
+const cartRouter = require('./gestionCarrito');
 const ordersRouter = require('./gestionPedidos');
-const processRouter = require('./process')
-const imageRouter = require('./imagenes')
+const processRouter = require('./process');
+const imageRouter = require('./imagenes');
+const messagesRouter = require('./mensajes');
 const { getProductos } = require('../DB/controllers/productoController');
 const logger = require('../logger');
 const { auth } = require('./auths');
@@ -29,6 +30,7 @@ router.use('/', cartRouter)
 router.use('/', ordersRouter)
 router.use('/', processRouter)
 router.use('/', imageRouter)
+router.use('/', messagesRouter)
 
 router.get("/", (req, res) => {
     if (req.session.usuario) {
