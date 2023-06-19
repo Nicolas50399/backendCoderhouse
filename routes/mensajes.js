@@ -18,7 +18,7 @@ router.get('/mensajes', auth, async (req, res) => {
     await allMessages(req, res)
 })
 
-router.get('/mensajes/:mail', auth, async (req, res) => {
+router.get('/mensajes/:email', auth, async (req, res) => {
 
     await mensajesPropios(req, res)
 })

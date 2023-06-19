@@ -1,24 +1,6 @@
 <html lang="en" style="text-align: center;">
 
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-  <meta name="description" content="" />
-  <meta name="author" content="" />
-
-
-  <title>Sticky Footer Navbar Template for Bootstrap</title>
-
-  <link rel="canonical" href="https://getbootstrap.com/docs/4.0/examples/sticky-footer-navbar/" />
-
-  <!-- Bootstrap core CSS -->
-  <link href="https://getbootstrap.com/docs/4.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <!-- Custom styles for this template -->
-  <link href="https://getbootstrap.com/docs/4.0/examples/sticky-footer-navbar/sticky-footer-navbar.css"
-    rel="stylesheet" />
-  <link href="/style.css" rel="stylesheet" type="text/css">
-
-</head>
+{{> head }}
 
 <body>
   {{> hMensajes}}
@@ -35,7 +17,7 @@
     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
       Historial
     </button>
-    <a href="/mensajes/{{this.email}}" type="submit">Ver mensajes propios</a>
+    
     <!-- Modal -->
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
       aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -71,6 +53,7 @@
       </button>
 
     </form>
+    <a href="/mensajes/{{user}}" type="submit" style="color: black;">Ver mensajes propios</a>
   </main>
 
   {{> footer}}

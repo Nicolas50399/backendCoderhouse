@@ -20,7 +20,8 @@ async function allMessages(req, res){
             layout: "mensajes",
             user: email,
             type: rank,
-            mensajes: messages
+            mensajes: messages,
+            name: req.session.usuario
         })
     })
 }
@@ -36,11 +37,11 @@ async function newMensaje(mensaje){
 
 async function mensajesPropios(req, res){
     const { email } = req.params
-    await Messages.findByFilters({"email": email}, async (err, messages) => {
+    await Messages.findManyByFilters({"email": email}, async (err, messages) => {
         if(err){
             logger.error("error al encontrar los mensajes: " + err)
         }
-        if(!product){
+        if(!messages){
             logger.error("Los mensajes no se encuentran en el sistema ")
         }
         res.render('home', { 

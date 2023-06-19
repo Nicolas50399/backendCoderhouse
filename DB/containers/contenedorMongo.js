@@ -28,6 +28,16 @@ class ContenedorMongo {
     }
   }
 
+  async findManyByFilters(filters, callback) {
+    try {
+      await this.db.find(filters, (err, object) => {
+        callback(err, object)
+    }).lean().clone()
+    } catch (e) {
+      throw new Error(e);
+    }
+  }
+
   async findAll(callback) {
     try {
       await this.db.find({}, (err, objects) => {
