@@ -30,47 +30,17 @@
       <p id="usermail">{{user}}</p>
       <p id="usertype">{{type}}</p>
     </div>
-    <h1>MENSAJES</h1>
-    <!-- Button trigger modal -->
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-      Historial
-    </button>
-    <a href="/mensajes/{{this.email}}" type="submit">Ver mensajes propios</a>
-    <!-- Modal -->
-    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-      aria-labelledby="staticBackdropLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h1 class="modal-title fs-5" id="staticBackdropLabel">Historial</h1>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-dialog modal-dialog-scrollable">
-            {{#each mensajes}}
-            <div style="border-top: 1px solid black;">
+    <h1>MENSAJES PROPIOS</h1>
+
+    <div id="messages" style="background-color: black; height: 25rem; color: white; overflow-y:scroll">
+                    {{#each mensajes}}
+            <div style="border-top: 1px solid white;">
               <p style="display: flex;">{{this.timestamp}} - [{{this.tipo}}]</p>
               <p style="display: flex;"><strong style="color: greenyellow;">{{this.email}}</strong>:
                 {{this.cuerpo}}</p>
             </div>
             {{/each}}
-          </div>
-          <div class="modal-footer">
-          </div>
-        </div>
-      </div>
     </div>
-    <div id="messages" style="background-color: black; height: 25rem; color: white; overflow-y:scroll">
-
-    </div>
-    <form class="form-signin" onsubmit="return addMessage(this)" style="margin: 5% 0 1rem 0;">
-      <h3 class="h3 mb-3 font-weight-normal">Nuevo mensaje</h3>
-      <label for="inputMensaje" class="sr-only">Nombre</label>
-      <input type="text" id="inputMensaje" class="form-control" placeholder="Mensaje" required autofocus />
-      <button class="btn btn-lg btn-primary btn-block" type="submit" value="Enviar">
-        Enviar
-      </button>
-
-    </form>
   </main>
 
   {{> footer}}

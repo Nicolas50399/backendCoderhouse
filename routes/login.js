@@ -51,7 +51,7 @@ router.use(session({
     cookie: {
         httpOnly: false,
         secure: false,
-        maxAge: 300000
+        maxAge: 600000
     },
     resave: true,
     saveUninitialized: true

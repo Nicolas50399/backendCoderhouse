@@ -1,8 +1,8 @@
 const express = require('express');
-//const crypto = require('crypto')
 const path = require('path');
-//const bodyParser = require('body-parser')
 const dotenv = require('dotenv').config()
+const { Server: IOServer } = require('socket.io')
+const { Server: HttpServer } = require('http');
 
 const yargs = require('yargs/yargs')(process.argv.slice(2))
 const args = yargs
@@ -54,7 +54,15 @@ switch (args.puerto) {
     default: { }
 }
 
+
 const app = express();
+
+const httpServer = new HttpServer(app)
+
+const io = new IOServer(httpServer)
+
+app.use(express.static('views'))
+
 
 app.use((req, res, next) => {
     logger.info(`Peticion ${req.method} en ${req.url}`)
@@ -66,6 +74,8 @@ app.use(express.urlencoded({ extended: true }));
 
 
 const handlebars = require("express-handlebars");
+const { DBConnect } = require('./DB/controllers/usuarioController.js');
+const { newMensaje } = require('./DB/services/mensajeServ.js');
 
 app.set('views', './views/');
 
@@ -99,10 +109,22 @@ app.use(
     }))
 */
 
-const { DBConnect, Users } = require('./DB/controllers/usuarioController');
+
+const messages = []
+
+io.on('connection', (socket) => {
+    socket.emit('messages', messages)
+
+    socket.on('new-message', data => {
+        messages.push(data)
+        newMensaje(data)
+        io.sockets.emit('messages', messages)
+    })
+})
 
 
 
 DBConnect(() => {
-    app.listen(PORT, () => logger.info(`Servidor escuchando en el puerto ${PORT}`));
+    httpServer.listen(PORT, () => logger.info(`Servidor escuchando en el puerto ${PORT}`));
 })
+

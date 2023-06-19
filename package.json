@@ -4,7 +4,7 @@
   "main": "main.js",
   "scripts": {
     "test": "node brenchmark.js",
-    "start": "node session.js"
+    "start": "node server.js"
   },
   "keywords": [],
   "author": "",
