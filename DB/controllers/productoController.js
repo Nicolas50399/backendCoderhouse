@@ -49,7 +49,7 @@ async function getProducto(req, res){
 
 async function addProducto(req, res){
     try{
-        const { nombre, marca, descripcion, categoria, precio, foto, cantidad } = req.body
+        const { nombre, marca, descripcion, categoria, precio, foto, stock } = req.body
         console.log(req.file)
         const newProduct = {
             nombre: nombre,
@@ -58,7 +58,7 @@ async function addProducto(req, res){
             categoria: categoria,
             precio: precio,
             foto: imageName,
-            cantidad: cantidad
+            stock: stock
         }
         await newProducto(newProduct)
         return res.redirect('/agregarProductos')
