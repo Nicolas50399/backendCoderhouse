@@ -11,7 +11,8 @@ module.exports = {
         marca: String,
         categoria: String,
         precio: Number,
-        foto: String
+        foto: String,
+        stock: Number
       },
     },
   };

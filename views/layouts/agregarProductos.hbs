@@ -7,7 +7,7 @@
   <div class="text-center" style="display:flex; flex-direction:column; align-items:center; margin-top:6rem">
     <!--enctype="multipart/form-data"--> 
     <form class="form-signin" method="POST" action="/api/productos" enctype="multipart/form-data">
-      <img class="mb-4" src="https://cdn.worldvectorlogo.com/logos/pug.svg" alt="" width="72" height="72" />
+      <img width="50" height="50" src="https://img.icons8.com/ios/50/upload--v1.png" alt="upload--v1"/>
       <h1 class="h3 mb-3 font-weight-normal">Agregar Producto</h1>
       <label for="inputNombreProducto" class="sr-only">Nombre</label>
       <input type="text" id="inputNombreProducto" class="form-control" placeholder="Nombre" required autofocus
@@ -32,6 +32,8 @@
 
       <label for="inputPrecio" class="sr-only">Precio</label>
       <input type="number" id="inputPrecioProducto" class="form-control" placeholder="Precio" required name="precio" />
+      <label for="inputStock" class="sr-only">Stock</label>
+      <input type="number" id="inputStockProducto" class="form-control" placeholder="Stock" required name="stock" />
       <label for="inputFotoUsuario" class="form-label">Foto</label>
       <input class="form-control form-control-lg" id="inputFotoProducto" type="file" placeholder="Foto" name="foto">
       <button class="btn btn-lg btn-primary btn-block" type="submit">

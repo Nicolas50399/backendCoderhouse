@@ -8,7 +8,14 @@ async function getAllCart(){
     return await Cart.findAll()
 }
 
-async function addProductCart(id){
+async function getTotalPrice(){
+    const products = await Cart.findAll()
+    let total = 0
+    products.forEach(p => total += (p.precio * p.cantidad))
+    return total
+}
+
+async function addProductCart(id, cantidad){
     await Products.findByFilters({_id: id}, async (err, product) => {
         if(err){
             logger.error("error al encontrar el producto: " + err)
@@ -25,7 +32,9 @@ async function addProductCart(id){
                 nombre: product.nombre,
                 marca: product.marca,
                 precio: product.precio,
-                foto: product.foto
+                foto: product.foto,
+                stock: product.stock,
+                cantidad: cantidad
             }
             await Cart.save(newProductCart)
             logger.info("Producto agregado!")
@@ -41,4 +50,4 @@ async function clearAllCart(){
     await Cart.deleteAll()
 }
 
-module.exports = { getAllCart, addProductCart, removeProductCart, clearAllCart, Cart }
+module.exports = { getAllCart, addProductCart, removeProductCart, clearAllCart, Cart, getTotalPrice }

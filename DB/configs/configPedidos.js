@@ -12,8 +12,11 @@ module.exports = {
         productos: [{
             nombre: String,
             marca: String,
-            precio: Number
-        }]
+            precio: Number,
+            cantidad: Number,
+            stock: Number
+        }],
+        total: Number
       },
     },
   };

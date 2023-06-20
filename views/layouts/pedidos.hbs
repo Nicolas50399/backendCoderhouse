@@ -6,6 +6,7 @@
 
     <!-- Begin page content -->
     <main role="main" class="container" style="text-align: center;">
+        <img width="50" height="50" src="https://img.icons8.com/ios/50/cydia.png" alt="cydia" style="margin-top: 1rem;"/>
         <h1 class="mt-5">Pedidos</h1>
         <table class="table table-primary">
             <thead>
@@ -29,11 +30,12 @@
                     <th scope="col">
                         {{#each this.productos}}
                         <ul>
-                            <li>{{this.nombre}}</li>
+                            <li>{{this.nombre}} x {{this.cantidad}}</li>
                             <li>{{this.marca}}</li>
-                            <li>${{this.precio}}</li>
+                            <li>${{this.precio}} c/u</li>
                         </ul>
                         {{/each}}
+                        <p>TOTAL: ${{this.total}}</p>
                     </th>
                     <th scope="col">
                         <form method="POST" action="/aceptar/{{this._id}}">

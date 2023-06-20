@@ -51,7 +51,8 @@ async function oneProduct(req, res){
             foto: product.foto,
             marca: product.marca,
             categoria: product.categoria,
-            precio: product.precio
+            precio: product.precio,
+            stock: product.stock
          })
     })
 }
@@ -71,14 +72,15 @@ async function updateProduct(req, res, imageName){
     
     const { id } = req.params
 
-    const { nombreM, marcaM, descripcionM, categoriaM, precioM } = req.body
+    const { nombreM, marcaM, descripcionM, categoriaM, precioM, stockM } = req.body
     await Products.updateByFilters({_id: id}, {
         nombre: nombreM,
         marca: marcaM,
         descripcion: descripcionM,
         categoria: categoriaM,
         precio: precioM,
-        foto: imageName
+        foto: imageName,
+        stock: stockM
     })
     res.redirect('/main')
 }

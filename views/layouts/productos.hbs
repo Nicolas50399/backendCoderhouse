@@ -6,6 +6,7 @@
 
   <!-- Begin page content -->
   <main role="main" class="container">
+    <img width="50" height="50" src="https://img.icons8.com/ios/50/home-page.png" alt="home-page" style="margin-top: 1rem;"/>
     <h1>Bienvenido {{name}}</h1>
     <h2>Email: {{mail}}</h2>
     <h1 class="mt-5">Productos</h1>
@@ -15,6 +16,7 @@
           <th scope="col">Nombre</th>
           <th scope="col">Marca</th>
           <th scope="col">Precio</th>
+          <th scope="col">Stock</th>
           <th scope="col"></th>
         </tr>
       </thead>
@@ -29,11 +31,13 @@
           </th>
           <th scope="col" style="">{{this.marca}}</th>
           <th scope="col">$ {{this.precio}}</th>
+          <th scope="col">{{this.stock}}</th>
           <th scope="col">
             <a href="/producto/{{this._id}}" type="submit">Ver detalles</a>
           </th>
           <th scope="col">
             <form method="POST" action="/agregar/{{this._id}}">
+            <input type="number" id="inputCantProducto" class="form-control" placeholder="Cantidad" required name="cantidad" max="{{this.stock}}" />
               <button class="btn btn-lg btn-success btn-block" type="submit">
                 Agregar
               </button>
@@ -85,6 +89,9 @@
                         <label for="inputPrecio" class="sr-only">Precio</label>
                         <input type="number" id="inputPrecioProducto" class="form-control" placeholder="{{this.precio}}"
                           required name="precioM" />
+                        <label for="inputStock" class="sr-only">Stock</label>
+                        <input type="number" id="inputStockProducto" class="form-control" placeholder="{{this.stock}}"
+                          required name="stockM" />
                         <label for="inputFotoUsuario" class="form-label">Foto</label>
                         <input class="form-control form-control-lg" id="inputFotoProducto" type="file"
                           placeholder="{{this.foto}}" name="foto">
@@ -107,6 +114,7 @@
       </tbody>
     </table>
     <a class="btn btn-lg btn-warning btn-block" href="/cart">
+    <img width="40" height="40" src="https://img.icons8.com/dotty/80/shopping-cart.png" alt="shopping-cart"/>
       Ir al carrito
     </a>
   </main>

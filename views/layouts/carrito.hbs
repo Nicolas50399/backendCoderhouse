@@ -6,20 +6,21 @@
 
     <!-- Begin page content -->
     <main role="main" class="container">
+        <img width="80" height="80" src="https://img.icons8.com/dotty/80/shopping-cart.png" alt="shopping-cart" style="margin-top: 1rem;"/>
         <h1 class="mt-5">Carrito</h1>
         <table class="table table-warning">
             <thead>
                 <tr>
                     <th scope="col">Nombre</th>
                     <th scope="col">Marca</th>
-                    <th scope="col">Precio</th>
+                    <th scope="col">Precio Unitario</th>
                     <th scope="col"></th>
                 </tr>
             </thead>
             <tbody>
                 {{#each productos}}
                 <tr>
-                    <th scope="col">{{this.nombre}}</th>
+                    <th scope="col">{{this.nombre}} x {{this.cantidad}}</th>
                     <th scope="col">{{this.marca}}</th>
                     <th scope="col">$ {{this.precio}}</th>
                     <th scope="col">
@@ -33,6 +34,7 @@
 
                 {{/each}}
             </tbody>
+            <h2>TOTAL: ${{total}}</h2>
         </table>
         <form method="POST" action="/vaciar">
             <button class="btn btn-lg btn-danger btn-block" type="submit">

@@ -8,7 +8,8 @@ class PedidoDto{
             this.productos.push({
                 nombre: productos[i].nombre,
                 marca: productos[i].marca,
-                precio: productos[i].precio
+                precio: productos[i].precio,
+                cantidad: productos[i].cantidad
             })
         }
     }

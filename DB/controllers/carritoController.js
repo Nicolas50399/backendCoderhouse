@@ -1,14 +1,14 @@
-const { addProductCart, removeProductCart, getAllCart, clearAllCart } = require("../services/carritoServ");
+const { addProductCart, removeProductCart, getAllCart, clearAllCart, getTotalPrice } = require("../services/carritoServ");
 const { addOrder } = require("../services/pedidoServ");
 
 async function getCart(req, res){
-    res.render('home', { layout: "carrito", productos: await getAllCart(), name: req.session.usuario });
+    res.render('home', { layout: "carrito", productos: await getAllCart(), name: req.session.usuario, total: await getTotalPrice() });
 }
 
 async function addProductoCarrito(req, res){
     const { id } = req.params
-
-    await addProductCart(id)
+    const { cantidad } = req.body
+    await addProductCart(id, cantidad)
     
     res.redirect('/main')
 }
@@ -29,12 +29,12 @@ async function clearCarrito(req, res){
 
 async function confirmPedido(req, res){
     const newOrder = {
-
         nombreUsuario: req.session.usuario,
         email: req.session.mail,
         telefono: req.session.telefono,
         pais: req.session.pais,
-        productos: await getAllCart()
+        productos: await getAllCart(),
+        total: await getTotalPrice()
     }
     await addOrder(newOrder)
 

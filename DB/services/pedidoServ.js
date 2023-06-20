@@ -59,13 +59,46 @@ async function acceptOrder(id){
         if(!order){
             logger.error("El pedido no se encuentra en el sistema ")
         }
-        //*Quito los productos que tenga ese pedido del sistema
+        //*Quito los productos que tenga ese pedido del sistema, si ya no hay stock. Si todavia queda, solo resto la cantidad comprada
         const productos = order.productos
         for(let i = 0; i < productos.length; i++){
-            await Products.deleteByFilters({"nombre": productos[i].nombre, "marca": productos[i].marca, "precio": productos[i].precio}, (err) => {
-                if(err) logger.error('Error al borrar el producto: ' + productos[i] + ' problema: ' + err)
-                logger.info('Producto borrado!')
-            });
+
+            Products.findByFilters({
+                "nombre": productos[i].nombre,
+                "marca": productos[i].marca,
+                "precio": productos[i].precio
+            }, async (err, product) => {
+                if(err){
+                    logger.error("error al encontrar el pedido: " + err)
+                }
+                if(!product){
+                    logger.error("El pedido no se encuentra en el sistema ")
+                }
+
+                if(productos[i].cantidad < product.stock){
+                    Products.updateByFilters({
+                        nombre: productos[i].nombre,
+                        marca: productos[i].marca,
+                        precio: productos[i].precio
+                    }, {
+                        stock: product.stock - productos[i].cantidad
+                    })
+                    logger.info(`Stock del producto ${productos[i].nombre} modificado!`)
+    
+                }
+                else if (productos[i].cantidad == product.stock){
+                    await Products.deleteByFilters({"nombre": productos[i].nombre, "marca": productos[i].marca, "precio": productos[i].precio}, (err) => {
+                        if(err) logger.error('Error al borrar el producto: ' + productos[i] + ' problema: ' + err)
+                        logger.info(`Producto ${productos[i].nombre} borrado!`)
+                    });
+                }
+                else{
+                    logger.error("ERROR- Una orden no puede realizarse si la cantidad de un producto supera a su stock en venta")
+                }
+
+            })
+
+            
         }
 
         await deleteOrder(id)
