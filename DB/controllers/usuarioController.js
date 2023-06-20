@@ -44,7 +44,7 @@ async function addUser(req, res){
     req.session.rank = 1
     req.session.foto = userImage
     req.session.pais = pais
-    await Mail(process.env.GMAILADMIN, 'Registro', username, email, telefono, [])
+    await Mail(process.env.GMAILADMIN, 'Registro', username, email, telefono, [], 0)
     res.redirect('/main')
 }
 

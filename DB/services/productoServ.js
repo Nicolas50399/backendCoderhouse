@@ -6,7 +6,7 @@ const { getAll, add } = require("../database/mongodb.js")
 const DAOProductoMongo = require("../daos/producto/DAOProductoMongo.js");
 const MyProductFactory = require("../factory/MyProductFactory.js");
 const RepoProductos = require("../repository/repoProductos.js");
-
+const Toastify = require('toastify-js')
 
 
 //const RepoProducts = new RepoProductos()
@@ -31,7 +31,9 @@ async function newProducto(producto){
         if(err){
             logger.error("error al guardar producto: " + err)
         }
-        logger.info("producto guardado!")
+        else{
+            logger.info("producto guardado!")
+        }
     })
 }
 
@@ -44,6 +46,8 @@ async function oneProduct(req, res){
         if(!product){
             logger.error("El pedido no se encuentra en el sistema ")
         }
+
+
         res.render('home', { 
             layout: "producto", 
             nombre: product.nombre, 

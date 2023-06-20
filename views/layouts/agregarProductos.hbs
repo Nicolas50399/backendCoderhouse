@@ -6,7 +6,7 @@
   {{> hAgregarProducto}}
   <div class="text-center" style="display:flex; flex-direction:column; align-items:center; margin-top:6rem">
     <!--enctype="multipart/form-data"--> 
-    <form class="form-signin" method="POST" action="/api/productos" enctype="multipart/form-data">
+    <form class="form-signin" method="POST" action="/api/productos" enctype="multipart/form-data" id="formAddProduct">
       <img width="50" height="50" src="https://img.icons8.com/ios/50/upload--v1.png" alt="upload--v1"/>
       <h1 class="h3 mb-3 font-weight-normal">Agregar Producto</h1>
       <label for="inputNombreProducto" class="sr-only">Nombre</label>
@@ -36,11 +36,12 @@
       <input type="number" id="inputStockProducto" class="form-control" placeholder="Stock" required name="stock" />
       <label for="inputFotoUsuario" class="form-label">Foto</label>
       <input class="form-control form-control-lg" id="inputFotoProducto" type="file" placeholder="Foto" name="foto">
-      <button class="btn btn-lg btn-primary btn-block" type="submit">
+      <button class="btn btn-lg btn-primary btn-block" type="submit" onclick="return confirm('¿Esta seguro de agregar el producto?')">
         Ingresar Producto
       </button>
 
     </form>
+    <div id="alertContainer"></div>
     <table id="productsList"></table>
   </div>
     {{> footer}}
@@ -48,6 +49,7 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
     crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 </body>
 
 </html>

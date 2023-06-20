@@ -25,7 +25,7 @@
                     <th scope="col">$ {{this.precio}}</th>
                     <th scope="col">
                         <form method="POST" action="/quitar/{{this.id}}">
-                            <button class="btn btn-lg btn-danger btn-block" type="submit">
+                            <button class="btn btn-lg btn-danger btn-block" type="submit" onclick="return confirm('¿Esta seguro de borrar el producto?')">
                                 Borrar
                             </button>
                         </form>
@@ -37,12 +37,12 @@
             <h2>TOTAL: ${{total}}</h2>
         </table>
         <form method="POST" action="/vaciar">
-            <button class="btn btn-lg btn-danger btn-block" type="submit">
+            <button class="btn btn-lg btn-danger btn-block" type="submit" onclick="return confirm('¿Esta seguro de vaciar el carrito?')">
                 Vaciar carrito
             </button>
         </form>
         <form method="POST" action="/confirmar">
-            <button class="btn btn-lg btn-success btn-block" type="submit">
+            <button class="btn btn-lg btn-success btn-block" type="submit" onclick="return confirm('¿Esta seguro de confirmar la compra?')">
                 Confirmar compra
             </button>
         </form>

@@ -5,7 +5,7 @@ const dotenv = require('dotenv').config()
 
 const client = twilio(process.env.SMSACCOUNT, process.env.SMSTOKEN)
 
-async function WSP(receptor, asunto, usuario, email, telefono, productos, pais){
+async function WSP(receptor, asunto, usuario, email, telefono, productos, pais, total){
     let msg = ""
     let prefijo
     switch (asunto) {
@@ -14,6 +14,7 @@ async function WSP(receptor, asunto, usuario, email, telefono, productos, pais){
             productos.forEach(producto => {
                 msg += `${producto.nombre}\n${producto.marca}\n $${producto.precio}\n\n`
             });
+            msg += `TOTAL: $${total}\n\n`
             prefijo = (Prefijos.find(p => p.name == pais)).dial_code
             break;
     

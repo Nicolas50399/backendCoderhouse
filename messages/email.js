@@ -2,7 +2,7 @@ const nodemailer = require('nodemailer');
 const logger = require('../logger');
 const dotenv = require('dotenv').config()
 
-async function Mail(receptor, asunto, usuario, email, telefono, productos){
+async function Mail(receptor, asunto, usuario, email, telefono, productos, total){
     const transporter = nodemailer.createTransport({
         service: 'gmail',
         port: 587,
@@ -37,7 +37,8 @@ async function Mail(receptor, asunto, usuario, email, telefono, productos){
                             <th>$${producto.precio}</th>
                         </tr>`
             });
-            html += `</tbody></table>`
+            html += `</tbody></table><br><br>
+                    <h2>TOTAL: $${total}</h2>`
             break;
         
         case 'Registro':

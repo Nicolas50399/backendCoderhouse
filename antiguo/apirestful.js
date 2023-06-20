@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const db = require("./containers/ContenedorArchivos.js")
+const db = require("../containers/ContenedorArchivos.js")
 
 const { Router } = express;
 

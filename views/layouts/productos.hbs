@@ -38,13 +38,13 @@
           <th scope="col">
             <form method="POST" action="/agregar/{{this._id}}">
             <input type="number" id="inputCantProducto" class="form-control" placeholder="Cantidad" required name="cantidad" max="{{this.stock}}" />
-              <button class="btn btn-lg btn-success btn-block" type="submit">
+              <button class="btn btn-lg btn-success btn-block" type="submit"  onclick="return confirm('¿Esta seguro de agregar el producto al carrito?')">
                 Agregar
               </button>
             </form>
             <div style="display: flex; flex-direction:row; justify-content:center; align-items:center">
               <form method="POST" action="/eliminar/{{this._id}}" style="margin: auto;">
-                <button class="btn btn-lg btn-danger btn-block" type="submit">
+                <button class="btn btn-lg btn-danger btn-block" type="submit" onclick="return confirm('¿Esta seguro de eliminar el producto?')">
                   Eliminar
                 </button>
               </form>
@@ -99,7 +99,7 @@
                       <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
 
-                        <button type="submit" class="btn btn-primary">Guardar cambios</button>
+                        <button type="submit" class="btn btn-primary"  onclick="return confirm('¿Esta seguro de modificar el producto?')">Guardar cambios</button>
 
                       </div>
                     </form>

@@ -39,14 +39,14 @@
                     </th>
                     <th scope="col">
                         <form method="POST" action="/aceptar/{{this._id}}">
-                            <button class="btn btn-lg btn-success btn-block" type="submit">
+                            <button class="btn btn-lg btn-success btn-block" type="submit" onclick="return confirm('¿Esta seguro de aceptar la orden?')">
                                 Aceptar
                             </button>
                         </form>
                     </th>
                     <th scope="col">
                         <form method="POST" action="/rechazar/{{this._id}}">
-                            <button class="btn btn-lg btn-danger btn-block" type="submit">
+                            <button class="btn btn-lg btn-danger btn-block" type="submit" onclick="return confirm('¿Esta seguro de rechazar la orden?')">
                                 Rechazar
                             </button>
                         </form>
